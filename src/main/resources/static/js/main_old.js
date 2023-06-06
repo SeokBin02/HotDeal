@@ -262,16 +262,12 @@
 })(jQuery);
 
 // custom functions
-var nowOffset;
-var pageSize = 20;
-
 $(document).ready(function () {
 	//getData(0); // TopN
 	set_main_category();
 });
 
-function getData(startOffset) {
-	console.log(startOffset);
+function getData(startPage) {
 	$.ajax({
 		url: '/products',
 		method: 'GET',
@@ -281,11 +277,10 @@ function getData(startOffset) {
 			mainCategory: $('#main-category').val(),
 			subCategory: $('#sub-category').val(),
 			keyword: $('#keyword').val(),
-			queryOffset: startOffset,
-			queryLimit: pageSize
+			page: startPage,
+			size: 20
 		},
 		success: function (response) {
-			nowOffset = startOffset;
 			console.log(response)
 			$('#product-list').empty();
 			$.each(response.content, (i, post) => {
@@ -297,9 +292,11 @@ function getData(startOffset) {
 				$('#product-list').append(temp_html);
 			});
 
-			// '이전', '다음' 버튼 생성
-			$('ul.pagination').empty();
-			createPageList(response['next']);
+			if ($('ul.pagination li').length - 2 != response.totalPages) {
+				// 처음 불러왔을 때 페이지 목록 구성
+				$('ul.pagination').empty();
+				createPageList(response);
+			}
 		},
 		error: function (e) {
 			alert("ERROR: ", e);
@@ -308,41 +305,113 @@ function getData(startOffset) {
 	})
 }
 
-function createPageList(next) {
-	var prevButton = '';
-	var nextButton = '';
+function createPageList(response) {
+	totalPages = response.totalPages;
 
-	// 첫 페이지가 아니면 '이전' 버튼 생성
-	if (nowOffset > 0) {
-		prevButton = '<li class="page-item"><a class="page-link">이전</a></li>';
+	var pageNumber = response.pageable.pageNumber;
+
+	var numLinks = 10;
+
+	// 현재 1페이지가 아닐 경우, '이전' 버튼 생성
+	var first = '';
+	var prev = '';
+	if (pageNumber > 0) {
+		if (pageNumber !== 0) {
+			first = '<li class="page-item"><a class="page-link">&nbsp;« 처음&nbsp;</a></li>';
+		}
+		prev = '<li class="page-item"><a class="page-link">&nbsp;‹ 이전&nbsp;</a></li>';
+	} else {
+		prev = ''; // 1페이지에 있으면 '이전' 버튼 비활성화
+		first = ''; // 1페이지에 있으면 '처음' 버튼 비활성화
 	}
 
-	// 마지막 페이지가 아니면 '다음' 버튼 생성
-	if (next) {
-		nextButton = '<li class="page-item"><a class="page-link">다음</a></li>';
+	// 마지막 페이지가 아닐 경우, '다음' 버튼 생성
+	var next = '';
+	var last = '';
+	if (pageNumber < totalPages) {
+		if (pageNumber !== totalPages - 1) {
+			next = '<li class="page-item"><a class="page-link">&nbsp;&nbsp;다음 ›</a></li>';
+			last = '<li class="page-item"><a class="page-link">&nbsp;끝 »&nbsp;</a></li>';
+		}
+	} else {
+		next = ''; // 마지막 페이지에 있으면 '다음' 버튼 비활성화
+		last = ''; // 마지막 페이지에 있으면 '끝' 버튼 비활성화
+	}
+
+	var start = pageNumber - (pageNumber % numLinks) + 1;
+	var end = start + numLinks - 1;
+	end = Math.min(totalPages, end);
+	var pagingLink = '';
+
+	for (var i = start; i <= end; i++) {
+		if (i == pageNumber + 1) {
+			// 현재 페이지 버튼은 만들지 않음
+			pagingLink += '<li class="page-item active"><a class="page-link"> ' + i + ' </a></li>';
+		} else {
+			pagingLink += '<li class="page-item"><a class="page-link"> ' + i + ' </a></li>';
+		}
 	}
 
 	// 페이지 링크 반환
-	var pagingLink = '';
-	pagingLink = prevButton + nextButton;
+	pagingLink = first + prev + pagingLink + next + last;
 	console.log(pagingLink);
 	$("ul.pagination").append(pagingLink);
 }
 
 // 페이지 버튼 클릭시 함수
 $(document).on("click", "ul.pagination li a", function () {
+	var data = $(this).attr('data');
 	let val = $(this).text();
 	console.log('val: ' + val);
 
 	// click on the NEXT tag
-	if (val === "이전") {
-		nowOffset -= pageSize;
-		getData(nowOffset);
-	} else if (val === "다음") {
-		nowOffset += pageSize;
-		getData(nowOffset);
+	if(val === "« 처음") {
+		let currentActive = $("li.active");
+		getData(0);
+		$("li.active").removeClass("active"); // 이전 버튼 비활성화
+		currentActive.next().addClass("active"); // '처음' 버튼 활성화
+	} else if(val === "끝 »") {
+		getData(totalPages - 1);
+		$("li.active").removeClass("active"); // 이전 버튼 비활성화
+		currentActive.next().addClass("active"); // '끝' 버튼 활성화
+	} else if(val === "다음 ›") {
+		let activeValue = parseInt($("ul.pagination li.active").text());
+		if(activeValue < totalPages){
+			let currentActive = $("li.active");
+			startPage = activeValue;
+			getData(startPage);
+			$("li.active").removeClass("active"); // 이전 버튼 비활성화
+			currentActive.next().addClass("active"); // '다음' 버튼 활성화
+		}
+	} else if(val === "‹ 이전") {
+		let activeValue = parseInt($("ul.pagination li.active").text());
+		if(activeValue > 1) {
+			startPage = activeValue - 2; // 이전 페이지 번호
+			getData(startPage);
+			let currentActive = $("li.active");
+			currentActive.removeClass("active"); // 이전 버튼 비활성화
+			currentActive.prev().addClass("active"); // '이전' 버튼 활성화
+		}
+	} else { // "번호"
+		startPage = parseInt(val - 1);
+		getData(startPage);
+		$("li.active").removeClass("active"); // 이전 버튼 비활성화
+		$(this).parent().addClass("active"); // 'N' 버튼 활성화
 	}
 });
+
+function set_product() {
+	$('#product-list').empty();
+	for (var i = 1; i <= 20; i++) {
+		let temp_html = `
+		<tr>
+			<td>${i}</td>
+			<td>상품명입니다.</td>
+			<td>99999</td>
+		</tr>`
+		$('#product-list').append(temp_html);
+	}
+}
 
 function set_main_category() {
 	$('#menu').empty();

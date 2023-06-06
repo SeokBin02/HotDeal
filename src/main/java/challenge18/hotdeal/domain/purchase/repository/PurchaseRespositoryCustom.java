@@ -4,8 +4,10 @@ import challenge18.hotdeal.domain.product.dto.AllProductResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface PurchaseRespositoryCustom {
-    Page<AllProductResponseDto> findTopN(Pageable pageable);
+    AllProductResponseDto findTopN(int queryLimit);
 //    List<AllProductResponseDto> findTop90(Pageable pageable);
 //    List<AllProductResponseDto> findTop90();
 }

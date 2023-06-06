@@ -27,19 +27,19 @@ public class HotDealFilterSearchTest {
     @Autowired
     UserRepository userRepository;
 
-    @Test
-    @DisplayName("로그인 처리시간 테스트")
-    void test1(){
-        //given
-        LoginRequest loginRequest = new LoginRequest("00008fa2-883d-4ed1-aefe-b53266eee847", "cf424df4-8c96-40e8-b4ab-ea81488bea26");
-
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-        userRepository.findByUserId(loginRequest.getUserId());
-        stopWatch.stop();
-
-        System.out.println(stopWatch.prettyPrint());
-    }
+//    @Test
+//    @DisplayName("로그인 처리시간 테스트")
+//    void test1(){
+//        //given
+//        LoginRequest loginRequest = new LoginRequest("00008fa2-883d-4ed1-aefe-b53266eee847", "cf424df4-8c96-40e8-b4ab-ea81488bea26");
+//
+//        StopWatch stopWatch = new StopWatch();
+//        stopWatch.start();
+//        userRepository.findByUserId(loginRequest.getUserId());
+//        stopWatch.stop();
+//
+//        System.out.println(stopWatch.prettyPrint());
+//    }
 
 //    @Test
 //    @DisplayName("응답시간 테스트")

@@ -2,6 +2,7 @@ package challenge18.hotdeal.domain.product.repository;
 
 import challenge18.hotdeal.domain.product.dto.AllProductResponseDto;
 import challenge18.hotdeal.domain.product.dto.ProductSearchCondition;
+import challenge18.hotdeal.domain.product.dto.SelectProductResponseDto;
 import challenge18.hotdeal.domain.product.entity.Product;
 import challenge18.hotdeal.domain.product.entity.QProduct;
 import com.querydsl.core.types.Projections;
@@ -33,14 +34,8 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
     QProduct subProduct = new QProduct("subProduct");
 
     @Override
-    public Page<AllProductResponseDto> findAllByPriceAndCategory(ProductSearchCondition condition, Pageable pageable) {
-//        List<AllProductResponseDto> content = getContent(condition, pageable);
-//        Long total = getTotal(condition);
-
-        List<AllProductResponseDto> content = getContent1(condition, pageable);
-        Long total = getTotal1(condition);
-
-        return new PageImpl<>(content, pageable, total);
+    public AllProductResponseDto findAllByPriceAndCategory(ProductSearchCondition condition) {
+        return getContent1(condition);
 
         // 석빈 쿼리 튜닝
 //        return sb(condition, pageable);
@@ -65,7 +60,8 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
                 .fetch();
 
         if(CollectionUtils.isEmpty(content_id)){
-            return new PageImpl(content, pageable, content.size());
+//            return new PageImpl(content, pageable, content.size());
+            return null;
         }
 
         content =  queryFactory
@@ -123,7 +119,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
                 .fetchOne();
     }
 
-    private List<AllProductResponseDto> getContent1(ProductSearchCondition condition, Pageable pageable) {
+    private AllProductResponseDto getContent1(ProductSearchCondition condition) {
         /* subQuery 사용할 경우
         SELECT product_name, price FROM products
         WHERE product_id IN (
@@ -136,28 +132,39 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
         AND price >= 10000
         AND price <= 11000
          */
-        return queryFactory
-                .select(Projections.constructor(AllProductResponseDto.class,
+        List<SelectProductResponseDto> content = queryFactory
+                .select(Projections.constructor(SelectProductResponseDto.class,
                         product.productName,
                         product.price))
                 .from(product)
                 .where(product.id.in(
-                        JPAExpressions
-                                .select(subProduct.id)
-                                .from(subProduct)
-                                .where(
-                                        searchPriceCategory(condition.getMinPrice(), condition.getMaxPrice()),
-                                        eqMainCategory(condition.getMainCategory()),
-                                        eqSubCategory(condition.getSubCategory())
-                                )
+                                JPAExpressions
+                                        .select(subProduct.id)
+                                        .from(subProduct)
+                                        .where(
+                                                searchPriceCategory(condition.getMinPrice(), condition.getMaxPrice()),
+                                                eqMainCategory(condition.getMainCategory()),
+                                                eqSubCategory(condition.getSubCategory())
+                                        )
                         ),
                         matchKeyword(condition.getKeyword()),
                         goeMinPrice(condition.getMinPrice()),
                         loeMaxPrice(condition.getMaxPrice())
                 )
-                .offset(pageable.getOffset()) // 페이지 번호
-                .limit(pageable.getPageSize()) // 페이지 사이즈
+                .offset(condition.getQueryOffset()) // 조회를 시작하는 행 번호
+                .limit(condition.getQueryLimit() + 1) // 조회할 행의 개수
                 .fetch();
+
+        boolean next; // 다음 페이지 유(true)/무(false)
+
+        // 다음 페이지가 있으면
+        if (content.size() == (condition.getQueryLimit() + 1)) {
+            next = true;
+            content.remove(content.size() - 1);
+        } else {
+            next = false;
+        }
+        return new AllProductResponseDto(content, next);
     }
 
     private Long getTotal1(ProductSearchCondition condition) {

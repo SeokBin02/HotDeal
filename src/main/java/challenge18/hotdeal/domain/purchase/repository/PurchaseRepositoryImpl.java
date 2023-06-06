@@ -1,6 +1,7 @@
 package challenge18.hotdeal.domain.purchase.repository;
 
 import challenge18.hotdeal.domain.product.dto.AllProductResponseDto;
+import challenge18.hotdeal.domain.product.dto.SelectProductResponseDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -22,14 +23,9 @@ public class PurchaseRepositoryImpl implements PurchaseRespositoryCustom {
 
     @Override
 
-    public Page<AllProductResponseDto> findTopN(
-            Pageable pageable
-    ) {
-        System.out.println("pageable.getOffset() = "
-                + pageable.getOffset()
-        );
-        List<AllProductResponseDto> content = queryFactory
-                .select(Projections.constructor(AllProductResponseDto.class,
+    public AllProductResponseDto findTopN(int queryLimit) {
+        List<SelectProductResponseDto> content = queryFactory
+                .select(Projections.constructor(SelectProductResponseDto.class,
                         product.productName,
                         product.price))
                 .from(purchase)
@@ -37,12 +33,10 @@ public class PurchaseRepositoryImpl implements PurchaseRespositoryCustom {
                 .where(purchase.product.isNotNull())
                 .groupBy(purchase.product)
                 .orderBy(purchase.amount.sum().desc())
-                .offset(pageable.getOffset()) // 페이지 번호
-                .limit(pageable.getPageSize())
+                .offset(0) // 페이지 번호
+                .limit(queryLimit)
                 .fetch();
-
-        return new PageImpl<>(content, pageable, pageable.getPageSize());
-//        return content;
+        return new AllProductResponseDto(content, false);
     }
 
 

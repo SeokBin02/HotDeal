@@ -6,7 +6,13 @@ spring:
         jdbc-url: jdbc:h2:mem:db;MODE=MYSQL;
         username: sa
         password:
-    slave:
+    slave1:
+      hikari:
+        driver-class-name: org.h2.Driver
+        jdbc-url: jdbc:h2:mem:db;MODE=MYSQL;
+        username: sa
+        password:
+    slave2:
       hikari:
         driver-class-name: org.h2.Driver
         jdbc-url: jdbc:h2:mem:db;MODE=MYSQL;

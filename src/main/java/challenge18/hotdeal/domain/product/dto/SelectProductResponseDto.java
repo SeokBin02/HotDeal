@@ -18,4 +18,9 @@ public class SelectProductResponseDto {
         this.categoryA = product.getCategoryA();
         this.categoryB = product.getCategoryB();
     }
+
+    public SelectProductResponseDto(String productName, int price) {
+        this.productName = productName;
+        this.price = price;
+    }
 }
