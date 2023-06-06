@@ -30,8 +30,6 @@ public class ProductService {
     // 상품 전체 조회 (필터링)
     public AllProductResponseDto allProduct(ProductSearchCondition condition) {
         condition.setCondition(validateInput(condition));
-        System.out.println("조건 수정 후");
-        System.out.println("condition.getKeyword() = " + condition.getKeyword());
 
         // 조건이 없을 경우 전날 판매 실적 기준 Top90위
         if (checkConditionNull(condition)) {
@@ -93,11 +91,8 @@ public class ProductService {
 
     // 입력된 값 유효성 검사
     public ProductSearchCondition validateInput(ProductSearchCondition condition) {
-        System.out.println("서비스");
-        System.out.println("condition.getKeyword() = " + condition.getKeyword());
         ProductSearchCondition fixedCondition = new ProductSearchCondition();
         fixedCondition.setCondition(condition);
-        System.out.println("fixedCondition.getKeyword() = " + fixedCondition.getKeyword());
 
         // minPrice가 음수일때
         if(condition.getMinPrice() != null && condition.getMinPrice() < 0){

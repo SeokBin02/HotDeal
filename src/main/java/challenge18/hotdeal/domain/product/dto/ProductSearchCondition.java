@@ -13,16 +13,16 @@ public class ProductSearchCondition {
     private String mainCategory;
     private String subCategory;
     private String keyword;
-    private Integer queryOffset;
+    private Long queryIndex;
     private Integer queryLimit;
 
-    public ProductSearchCondition(Long minPrice, Long maxPrice, String mainCategory, String subCategory, String keyword, Integer queryOffset, Integer queryLimit) {
+    public ProductSearchCondition(Long minPrice, Long maxPrice, String mainCategory, String subCategory, String keyword, Long queryIndex, Integer queryLimit) {
         this.minPrice = minPrice;
         this.maxPrice = maxPrice;
         this.mainCategory = mainCategory;
         this.subCategory = subCategory;
         this.keyword = keyword;
-        this.queryOffset = queryOffset;
+        this.queryIndex = queryIndex;
         this.queryLimit = queryLimit;
 
     }

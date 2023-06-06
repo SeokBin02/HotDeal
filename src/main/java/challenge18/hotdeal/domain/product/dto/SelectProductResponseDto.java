@@ -5,6 +5,7 @@ import lombok.Getter;
 
 @Getter
 public class SelectProductResponseDto {
+    private Long id;
     private String productName;
     private int price;
     private int amount;
@@ -12,6 +13,7 @@ public class SelectProductResponseDto {
     private String categoryB;
 
     public SelectProductResponseDto(Product product) {
+        this.id = product.getId();
         this.productName = product.getProductName();
         this.price = product.getPrice();
         this.amount = product.getAmount();
@@ -19,7 +21,8 @@ public class SelectProductResponseDto {
         this.categoryB = product.getCategoryB();
     }
 
-    public SelectProductResponseDto(String productName, int price) {
+    public SelectProductResponseDto(Long id, String productName, int price) {
+        this.id = id;
         this.productName = productName;
         this.price = price;
     }

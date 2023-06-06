@@ -262,7 +262,8 @@
 })(jQuery);
 
 // custom functions
-var nowOffset;
+var indexList = [];
+var nowPage;
 var pageSize = 20;
 
 $(document).ready(function () {
@@ -270,8 +271,14 @@ $(document).ready(function () {
 	set_main_category();
 });
 
-function getData(startOffset) {
-	console.log(startOffset);
+function initIndexList() {
+	indexList = [0];
+	getData(0);
+}
+
+function getData(pageNumber) {
+	//console.log(indexList);
+	nowPage = pageNumber;
 	$.ajax({
 		url: '/products',
 		method: 'GET',
@@ -281,12 +288,11 @@ function getData(startOffset) {
 			mainCategory: $('#main-category').val(),
 			subCategory: $('#sub-category').val(),
 			keyword: $('#keyword').val(),
-			queryOffset: startOffset,
+			queryIndex: indexList[pageNumber],
 			queryLimit: pageSize
 		},
 		success: function (response) {
-			nowOffset = startOffset;
-			console.log(response)
+			//console.log(response)
 			$('#product-list').empty();
 			$.each(response.content, (i, post) => {
 				let temp_html = `<tr>
@@ -296,6 +302,14 @@ function getData(startOffset) {
 						</tr>`;
 				$('#product-list').append(temp_html);
 			});
+
+			// 다음 페이지 조회시 참고할 product_id 등록
+			// 1페이지 조회시, 2페이지 조회에 참고할 product_id가 등록된다.
+			// 이전 버튼으로 다시 0페이지로 돌아갈 경우, 1페이지 조회에 참고할 product_id는 이미 등록되어 있다.
+			// 이럴 때는 등록하면 안됨.
+			if (indexList.length === pageNumber + 1) {
+				indexList.push(response.content[pageSize - 1].id + 1);
+			}
 
 			// '이전', '다음' 버튼 생성
 			$('ul.pagination').empty();
@@ -313,7 +327,7 @@ function createPageList(next) {
 	var nextButton = '';
 
 	// 첫 페이지가 아니면 '이전' 버튼 생성
-	if (nowOffset > 0) {
+	if (nowPage > 0) {
 		prevButton = '<li class="page-item"><a class="page-link">이전</a></li>';
 	}
 
@@ -325,7 +339,7 @@ function createPageList(next) {
 	// 페이지 링크 반환
 	var pagingLink = '';
 	pagingLink = prevButton + nextButton;
-	console.log(pagingLink);
+	//console.log(pagingLink);
 	$("ul.pagination").append(pagingLink);
 }
 
@@ -336,11 +350,9 @@ $(document).on("click", "ul.pagination li a", function () {
 
 	// click on the NEXT tag
 	if (val === "이전") {
-		nowOffset -= pageSize;
-		getData(nowOffset);
+		getData(nowPage - 1);
 	} else if (val === "다음") {
-		nowOffset += pageSize;
-		getData(nowOffset);
+		getData(nowPage + 1);
 	}
 });
 

@@ -43,6 +43,10 @@ dependencies {
     annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa" // @Entity를 탐색해 QClass 생성
     annotationProcessor 'jakarta.persistence:jakarta.persistence-api' // QFile을 찾지 못하는 에러인 NoClassDefFountError 에 대응
     annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
+
+    // Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.redisson:redisson-spring-boot-starter:3.17.4'
 }
 
 // gradle build시 QFile도 함께 build하기 위해 저장 위치 알려줌
