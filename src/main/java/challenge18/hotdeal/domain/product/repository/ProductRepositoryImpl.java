@@ -11,6 +11,8 @@ import com.querydsl.core.types.dsl.NumberTemplate;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -20,9 +22,11 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static challenge18.hotdeal.common.config.Redis.RedisCacheKey.PRODUCT;
 import static challenge18.hotdeal.domain.product.entity.QProduct.product;
 import static java.lang.Long.valueOf;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class ProductRepositoryImpl implements ProductRepositoryCustom {
@@ -31,9 +35,10 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
     QProduct subProduct = new QProduct("subProduct");
 
     @Override
+    @Cacheable(value = PRODUCT, cacheManager = "redisCacheManager")
     public AllProductResponseDto findAllByPriceAndCategory(ProductSearchCondition condition) {
+        log.info("repo 실행여부");
         return getContent(condition);
-
         // 석빈 쿼리 튜닝
 //        return sb(condition, pageable);
     }

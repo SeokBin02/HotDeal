@@ -10,6 +10,7 @@ import challenge18.hotdeal.domain.user.repository.UserRepository;
 import com.sun.jdi.request.DuplicateRequestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,8 @@ import javax.validation.ConstraintViolationException;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Optional;
+
+import static challenge18.hotdeal.common.config.Redis.RedisCacheKey.USER;
 
 @Service
 @Slf4j
@@ -69,7 +72,9 @@ public class UserService {
         return new ResponseEntity<>(new Message("로그인 성공"), HttpStatus.OK);
     }
 
-    private Optional<User> checkUserExist(String userId){
+
+    @Cacheable(value = USER, cacheManager = "redisCacheManager")
+    public Optional<User> checkUserExist(String userId){
         log.info("db접근");
         return userRepository.findByUserId(userId);
     }

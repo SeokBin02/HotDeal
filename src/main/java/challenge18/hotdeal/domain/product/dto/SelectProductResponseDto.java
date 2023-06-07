@@ -2,8 +2,10 @@ package challenge18.hotdeal.domain.product.dto;
 
 import challenge18.hotdeal.domain.product.entity.Product;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
+@RequiredArgsConstructor
 public class SelectProductResponseDto {
     private Long id;
     private String productName;
@@ -23,6 +25,11 @@ public class SelectProductResponseDto {
 
     public SelectProductResponseDto(Long id, String productName, int price) {
         this.id = id;
+        this.productName = productName;
+        this.price = price;
+    }
+
+    public SelectProductResponseDto(String productName, int price) {
         this.productName = productName;
         this.price = price;
     }

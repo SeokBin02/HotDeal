@@ -3,9 +3,11 @@ package challenge18.hotdeal.domain.product.dto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 public class ProductSearchCondition {
     private Long minPrice;
@@ -13,8 +15,8 @@ public class ProductSearchCondition {
     private String mainCategory;
     private String subCategory;
     private String keyword;
-    private Long queryIndex;
-    private Integer queryLimit;
+    private Long queryIndex=0L;
+    private Integer queryLimit=30;
 
     public ProductSearchCondition(Long minPrice, Long maxPrice, String mainCategory, String subCategory, String keyword, Long queryIndex, Integer queryLimit) {
         this.minPrice = minPrice;
