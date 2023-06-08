@@ -29,13 +29,13 @@ public class ProductService {
 
         // 조건이 없을 경우 전날 판매 실적 기준 Top90위
         if (checkConditionNull(condition)) {
-            return purchaseRepository.findTopN(condition.getQueryLimit());
+//            return purchaseRepository.findTopN(condition.getQueryLimit());
 //            return purchaseRepository.findTop90();
+            return null;
         }
 
         // 조건 필터링
         return productRepository.findAllByPriceAndCategory(condition);
-//        return productRepository.findAllByPriceAndCategory(condition);
     }
 
     //상품 상세 조회

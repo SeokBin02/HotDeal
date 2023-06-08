@@ -265,29 +265,42 @@
 var indexList = [];
 var nowPage;
 var pageSize = 20;
+var globalMinPrice;
+var globalMaxPrice;
+var globalMainCategory;
+var globalSubCategory;
+var globalKeyword;
 
 $(document).ready(function () {
-	//getData(0); // TopN
+	getData(0); // TopN
 	set_main_category();
+	sign();
 });
 
-function initIndexList() {
+function search() {
 	indexList = [0];
 	getData(0);
+	sign();
 }
 
 function getData(pageNumber) {
 	//console.log(indexList);
+	globalMinPrice = $('#minPrice').val()
+	globalMaxPrice = $('#maxPrice').val()
+	globalMainCategory = $('#main-category').val()
+	globalSubCategory = $('#sub-category').val()
+	globalKeyword = $('#keyword').val()
+
 	nowPage = pageNumber;
 	$.ajax({
 		url: '/products',
 		method: 'GET',
 		data: {
-			minPrice: $('#minPrice').val(),
-			maxPrice: $('#maxPrice').val(),
-			mainCategory: $('#main-category').val(),
-			subCategory: $('#sub-category').val(),
-			keyword: $('#keyword').val(),
+			minPrice: globalMinPrice,
+			maxPrice: globalMaxPrice,
+			mainCategory: globalMainCategory,
+			subCategory: globalSubCategory,
+			keyword: globalKeyword,
 			queryIndex: indexList[pageNumber],
 			queryLimit: pageSize
 		},
@@ -297,7 +310,8 @@ function getData(pageNumber) {
 			$.each(response.content, (i, post) => {
 				let temp_html = `<tr>
 							<td>${i + 1}</td>
-							<td>${post.productName}</td>
+<!--							<td><a href="javascript:void(0)" onclick="detail(${post.id});">${post.productName}</a></td>-->
+							<td><div onclick="detail(${post.id});" style="cursor: pointer">${post.productName}</div></td>
 							<td>${post.price}</td>
 						</tr>`;
 				$('#product-list').append(temp_html);
@@ -357,7 +371,7 @@ $(document).on("click", "ul.pagination li a", function () {
 });
 
 function set_main_category() {
-	$('#menu').empty();
+	//$('#menu').empty();
 	let mainCategories = ["상의", "아우터", "바지", "원피스",
                 "스커트", "스니커즈", "신발", "가방", "여성 가방",
                 "스포츠/용품", "모자", "양말/레그웨어", "속옷", "선글라스/안경테",
@@ -365,7 +379,8 @@ function set_main_category() {
                 "리빙", "컬처", "반려동물"];
 
 	mainCategories.forEach((mainCategory) => {
-		let temp_html = `<option value=${mainCategory.replace(" ", "&nbsp")}>${mainCategory}</option>`;
+		let value = mainCategory.replace(" ", "&nbsp")
+		let temp_html = `<option value=${value}>${value}</option>`;
 		$('#main-category').append(temp_html)
 	});
 };
@@ -466,7 +481,118 @@ function set_sub_category(mainCategory) {
 			break;
 	}
 	subCategories.forEach((subCategory) => {
-		let temp_html = `<option value=${subCategory.replace(" ", "&nbsp")}>${subCategory.replace(" ", "&nbsp")}</option>`
+		let value = subCategory.replace(" ", "&nbsp")
+		let temp_html = `<option value=${value}>${value}</option>`
 		$('#sub-category').append(temp_html)
 	});
+}
+
+function detail(id) {
+	$.ajax({
+		url: '/products/' + id,
+		method: 'GET',
+		success: function (post) {
+			console.log(post);
+			customAlert.alert(post.id, post.productName, post.categoryA, post.categoryB, post.price, post.amount)
+		},
+		error: function (e) {
+			alert("ERROR: ", e);
+			console.log("ERROR: ", e);
+		},
+	})
+}
+
+// <header className="major">
+// 	<h2>Options</h2>
+// </header>
+function CustomAlert() {
+	this.alert = function (productId, productName, mainCategory, subCategory, price, amount) {
+		document.body.innerHTML =
+			document.body.innerHTML +
+			'<div id="dialogoverlay">' +
+			'</div>' +
+			'<div id="dialogbox" class="slit-in-vertical">' +
+				'<div>' +
+					'<div id="dialogboxhead">' +
+					'</div>' +
+					'<div id="dialogboxbody" style="padding-top: 30px; padding-bottom: 0px">' +
+						'<table>' +
+							'<tbody>' +
+								'<tr><td>품번</td><td id="productInfo"></td></tr>' +
+								'<tr><td>가격</td><td id="priceInfo"></td></tr>' +
+								'<tr><td>재고</td><td id="amountInfo"></td></tr>' +
+								'<tr><td>구매수량</td><td><input type="number" name="quantity"></td></tr>' +
+							'</tbody>' +
+						'</table>' +
+					'</div>' +
+					'<div id="dialogboxfoot" style="text-align: center">' +
+						'<div style="width: 50%; float: left;">' +
+							'<button type="button" onclick="customAlert.buy()" style="margin-bottom: 10px;">buy</button>' +
+						'</div>' +
+						'<div style="width: 50%; float: right;">' +
+							'<button type="button" onclick="customAlert.cancel()" style="margin-bottom: 10px;">cancel</button>' +
+						'</div>' +
+					'</div>' +
+				'</div>' +
+			'</div>';
+
+		let dialogoverlay = document.getElementById("dialogoverlay");
+		let dialogbox = document.getElementById("dialogbox");
+
+		let winH = window.innerHeight;
+		dialogoverlay.style.height = winH + "px";
+
+		dialogbox.style.top = "100px";
+
+		dialogoverlay.style.display = "block";
+		dialogbox.style.display = "block";
+
+		document.getElementById("dialogboxhead").style.display = "block";
+
+		document.getElementById("dialogboxhead").innerHTML =
+			'<header id="header" style="padding-top: 0px;">' +
+				'<a id="categoryInfo" class="logo">' +
+					mainCategory + ' > ' + subCategory + '<br>' +
+					'<strong>' + productName + '</strong>' +
+				'</a>' +
+			'</header>';
+
+		document.getElementById("productInfo").innerHTML = productId;
+		document.getElementById("priceInfo").innerHTML = price.toLocaleString('ko-KR') + '원';
+		document.getElementById("amountInfo").innerHTML = amount.toLocaleString('ko-KR') + '개';
+	};
+
+	this.buy = function () {
+		document.getElementById("dialogbox").style.display = "none";
+		document.getElementById("dialogoverlay").style.display = "none";
+	};
+
+	this.cancel = function () {
+		document.getElementById("dialogbox").style.display = "none";
+		document.getElementById("dialogoverlay").style.display = "none";
+	};
+}
+
+let customAlert = new CustomAlert();
+
+var signState = false;
+function sign() {
+	$('#sign-button').empty();
+	let loginHtml = '';
+	if (signState === false) {
+		loginHtml = `<button onclick="login()" type="button" id="login-button" style="margin-top: 10px;">Log-in</button>`
+	} else {
+		loginHtml = `<button onclick="logout()" type="button" id="logout-button" style="margin-top: 10px;">Log-out</button>`
+	}
+	$('#sign-button').append(loginHtml);
+}
+
+function login() {
+	signState = true;
+	sign();
+}
+
+function logout() {
+	signState = false;
+	sign();
 }

@@ -28,7 +28,7 @@ public class ProductController {
 //        System.out.println("condition.getMainCategory() = " + condition.getMainCategory());
 //        System.out.println("condition.getSubCategory() = " + condition.getSubCategory());
 //        System.out.println("condition.getKeyword() = " + condition.getKeyword());
-//        System.out.println("condition.getQueryOffset() = " + condition.getQueryIndex());
+//        System.out.println("condition.getQueryIndex() = " + condition.getQueryIndex());
 //        System.out.println("condition.getQueryLimit() = " + condition.getQueryLimit());
         return productService.allProduct(condition);
 

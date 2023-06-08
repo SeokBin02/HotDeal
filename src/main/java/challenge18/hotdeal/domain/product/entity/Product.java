@@ -27,8 +27,6 @@ public class Product {
     @Column
     private String categoryB;
 
-    @Column
-    private int priceCategory;
 
     @Column
     private int amount;
@@ -39,11 +37,6 @@ public class Product {
         this.categoryA = categoryA;
         this.categoryB = categoryB;
         this.amount = amount;
-        setPriceCategory(price);
-    }
-
-    private void setPriceCategory(int price){
-        this.priceCategory = price/1000;
     }
 
     public void buy(int quantity) {
