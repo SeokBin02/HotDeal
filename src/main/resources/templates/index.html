@@ -11,7 +11,8 @@
 		<title>Hot Deal</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		 <link rel="stylesheet" type="text/css" href="/css/main.css">
+		  <link rel="stylesheet" type="text/css" href="/css/main.css">
+<!--		<link rel="stylesheet" type="text/css" href="../static/css/main.css">-->
 		<link rel="icon" href="/images/fire.png">
 	</head>
 	<body class="is-preload">
@@ -55,13 +56,25 @@
 
 				<!-- Sidebar -->
 					<div id="sidebar">
+						<!-- <div class="inner" style="padding-top: 0px;"> -->
 						<div class="inner">
+							<section style="padding-bottom: 0px;">
+								<div style="text-align: center;" id="sign-button">
+									
+								</div>
+							</section>
 
 							<!-- Product -->
-							<section style="padding-bottom: 10px;">
+							<section style="padding-bottom: 0px;">
 								<header class="major">
 									<h2>Options</h2>
 								</header>
+								<label for="product-type">상품 타입</label>
+								<select id="product-type">
+									<option value="normal" selected>일반 상품</option>
+									<option value="limited">한정판 상품</option>
+								</select>
+								<br>
 								<label for="main-category">대분류</label>
 								<select onclick="set_sub_category(this.value)" id="main-category">
 									<option value="" selected>전체 선택</option>
@@ -72,27 +85,22 @@
 									<option value="" selected>전체 선택</option>
 								</select>
 								<br>
-								<br>
+								<!-- <br> -->
 								<label for="minPrice">최소 가격</label>
 								<input id="minPrice" type="text"/>
-								<br>
+								<!-- <br> -->
 								<br>
 								<label for="minPrice">최대 가격</label>
 								<input id="maxPrice" type="text"/>
-								<br>
+								<!-- <br> -->
 								<br>
 								<label for="minPrice">키워드</label>
 								<input id="keyword" type="text"/>
 								<br>
 								<div style="text-align: center;">
-									<button onclick="search()" type="button">
+									<button onclick="search()" type="button" style="margin-bottom: 20px;">
 										Search
 									</button>
-								</div>
-								<div style="text-align: center;" id="sign-button" >
-<!--									<button onclick="search()" type="button" id="sign">-->
-<!--										Search-->
-<!--									</button>-->
 								</div>
 							</section>
 
@@ -105,11 +113,11 @@
 								</section>
 							
 							<!-- Section -->
-								<section>
+								<!-- <section>
 									<header class="major">
 										<h2>etc.</h2>
 									</header>
-								</section>
+								</section> -->
 
 						</div>
 					</div>
@@ -117,10 +125,17 @@
 			</div>
 
 		<!-- Scripts -->
-			<script src="/js/jquery.min.js"></script>
-			<script src="/js/browser.min.js"></script>
-			<script src="/js/breakpoints.min.js"></script>
-			<script src="/js/util.js"></script>
-			<script src="/js/main.js"></script>
+			 <script src="/js/jquery.min.js"></script>
+			 <script src="/js/browser.min.js"></script>
+			 <script src="/js/breakpoints.min.js"></script>
+			 <script src="/js/util.js"></script>
+			 <script src="/js/hotdeal.js"></script>
+			 <script src="/js/main.js"></script>
+<!--			<script src="../static/js/jquery.min.js"></script>-->
+<!--			<script src="../static/js/browser.min.js"></script>-->
+<!--			<script src="../static/js/breakpoints.min.js"></script>-->
+<!--			<script src="../static/js/util.js"></script>-->
+<!--			<script src="../static/js/hotdeal.js"></script>-->
+<!--			<script src="../static/js/main.js"></script>-->
 	</body>
 </html>

@@ -56,7 +56,7 @@ public class ProductService {
         if (product.getAmount() <= 0) {
             throw new IllegalArgumentException("상품 재고가 없습니다.");
         } else if ((product.getAmount() > 0) && (product.getAmount() < quantity)) {
-            throw new IllegalArgumentException("주문하신 상품의 재고가 " + quantity + "개 남았습니다.");
+            throw new IllegalArgumentException("주문하신 상품의 재고가 " + product.getAmount() + "개 남았습니다.");
         }
 
         product.buy(quantity);
