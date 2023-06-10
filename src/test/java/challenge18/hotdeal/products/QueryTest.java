@@ -40,13 +40,14 @@ public class QueryTest {
                 "GROUP BY p.product_id " +
                 "ORDER BY SUM(pr.amount) DESC " +
                 "LIMIT 20";
+        
        // when
         Query nativeQuery = em.createNativeQuery(sql, "SelectProductResponseMapping");
         nativeQuery.setParameter("start", start);
         nativeQuery.setParameter("end", end);
         List<SelectProductResponseDto> productList = nativeQuery.getResultList();
 
-        em.close();
+        // em.close();
 
         //then
         assertEquals(20, productList.size());
