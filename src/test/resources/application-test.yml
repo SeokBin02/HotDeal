@@ -20,5 +20,6 @@ spring:
         password:
   data:
     redis:
-      host: localhost
+      #      host: hotdeal-redis-001.pbvqep.0001.apn2.cache.amazonaws.com:6379 -> 배포 전 주석 해제
+      host: localhost # -> 배포 전 주석 처리
       port: 6379

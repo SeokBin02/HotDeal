@@ -1,9 +1,6 @@
 package challenge18.hotdeal.domain.product.dto;
 
-import challenge18.hotdeal.domain.product.entity.Product;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;

@@ -62,6 +62,7 @@ public class RedisConfig {
         cacheConfigMap.put(RedisCacheKey.PRODUCT, redisCacheConfiguration.entryTtl(Duration.ofMinutes(30)));
         cacheConfigMap.put(RedisCacheKey.LIMITED, redisCacheConfiguration.entryTtl(Duration.ofMinutes(30)));
         cacheConfigMap.put(RedisCacheKey.PURCHASE, redisCacheConfiguration.entryTtl(Duration.ofMinutes(30)));
+        cacheConfigMap.put(RedisCacheKey.POPULAR_ITEM, redisCacheConfiguration.entryTtl(Duration.ofHours(25)));
 
         return RedisCacheManager
                 .RedisCacheManagerBuilder
