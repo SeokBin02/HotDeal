@@ -10,20 +10,20 @@ $(document).ready(function () {
 	set_main_category();
 	set_sign_button();
 
-	document.body.innerHTML =
-		document.body.innerHTML +
-		'<div id="dialogoverlay">' +
-		'</div>' +
-		'<div id="dialogbox" class="slit-in-vertical">' +
-			'<div>' +
-				'<div id="dialogboxhead">' +
-				'</div>' +
-				'<div id="dialogboxbody" style="padding-top: 30px; padding-bottom: 0px">' +
-				'</div>' +
-				'<div id="dialogboxfoot" style="text-align: center; margin-top: 15px; margin-bottom: 50px;">' +
-				'</div>' +
-			'</div>' +
-		'</div>';
+	// document.body.innerHTML =
+	// 	document.body.innerHTML +
+	// 	'<div id="alertBackground">' +
+	// 	'</div>' +
+	// 	'<div id="alertBox" class="slit-in-vertical">' +
+	// 		'<div>' +
+	// 			'<div id="alertBoxHead">' +
+	// 			'</div>' +
+	// 			'<div id="alertBoxBody" style="padding-top: 30px; padding-bottom: 0px">' +
+	// 			'</div>' +
+	// 			'<div id="alertBoxFoot" style="text-align: center; margin-top: 15px; margin-bottom: 50px;">' +
+	// 			'</div>' +
+	// 		'</div>' +
+	// 	'</div>';
 });
 
 function search() {
@@ -153,8 +153,8 @@ function buy(id) {
 			success: function (response) {
 				console.log(response);
 				alert("구매 완료!");
-				document.getElementById("dialogbox").style.display = "none";
-				document.getElementById("dialogoverlay").style.display = "none";
+				document.getElementById("alertBox").style.display = "none";
+				document.getElementById("alertBackground").style.display = "none";
 			},
 			error: function (request, status, error) {
 				alert(JSON.parse(request.responseText).msg);
@@ -164,8 +164,8 @@ function buy(id) {
 }
 
 function cancel() {
-	document.getElementById("dialogbox").style.display = "none";
-	document.getElementById("dialogoverlay").style.display = "none";
+	document.getElementById("alertBox").style.display = "none";
+	document.getElementById("alertBackground").style.display = "none";
 }
 
 function register() {
@@ -184,8 +184,8 @@ function register() {
 		}),
 		success: function (response) {
 			alert(response.msg);
-			document.getElementById("dialogbox").style.display = "none";
-			document.getElementById("dialogoverlay").style.display = "none";
+			document.getElementById("alertBox").style.display = "none";
+			document.getElementById("alertBackground").style.display = "none";
 		},
 		error: function (request, status, error) {
 			alert(JSON.parse(request.responseText).msg);
@@ -211,8 +211,8 @@ function login() {
 			alert(JSON.parse(request.responseText).msg);
 		},
 	})
-	document.getElementById("dialogbox").style.display = "none";
-	document.getElementById("dialogoverlay").style.display = "none";
+	document.getElementById("alertBox").style.display = "none";
+	document.getElementById("alertBackground").style.display = "none";
 }
 
 function logout() {
@@ -222,7 +222,7 @@ function logout() {
 
 function CustomAlert() {
 	this.detailPage = function (productId, productName, mainCategory, subCategory, price, amount) {
-		document.getElementById("dialogboxhead").innerHTML =
+		document.getElementById("alertBoxHead").innerHTML =
 			'<header id="header" style="padding-top: 0px;">' +
 				'<a id="categoryInfo" class="logo">' +
 					mainCategory + ' > ' + subCategory + '<br>' +
@@ -230,7 +230,7 @@ function CustomAlert() {
 				'</a>' +
 			'</header>';
 
-		document.getElementById('dialogboxbody').innerHTML =
+		document.getElementById('alertBoxBody').innerHTML =
 			'<table>' +
 				'<tbody>' +
 					'<tr><td>품번</td><td id="productInfo">' + productId + '</td></tr>' +
@@ -240,7 +240,7 @@ function CustomAlert() {
 				'</tbody>' +
 			'</table>' 
 
-		document.getElementById('dialogboxfoot').innerHTML = 
+		document.getElementById('alertBoxFoot').innerHTML =
 			'<div style="width: 50%; float: left;">' +
 				'<button type="button" onclick="buy(' + productId + ')" style="margin-bottom: 10px;">buy</button>' +
 			'</div>' +
@@ -252,20 +252,20 @@ function CustomAlert() {
 	};
 
     this.loginPage = function () {
-		document.getElementById('dialogboxhead').innerHTML = 
+		document.getElementById('alertBoxHead').innerHTML =
 			'<header id="header" style="padding-top: 0px;">' +
 				'<a id="categoryInfo" class="logo">' +
 					'<strong>Login</strong>' +
 				'</a>' +
 			'</header>'
 
-		document.getElementById('dialogboxbody').innerHTML =
+		document.getElementById('alertBoxBody').innerHTML =
 			'<label for="username">아이디</label>' +
 			'<input id="username" type="text"/><br>' +
 			'<label for="password">비밀번호</label>' +
 			'<input id="password" type="text"/>'
 
-		document.getElementById('dialogboxfoot').innerHTML = 
+		document.getElementById('alertBoxFoot').innerHTML =
 			'<div style="width: 50%; float: left;">' +
 				'<button type="button" onclick="login()" style="margin-bottom: 10px;">Login</button>' +
 			'</div>' +
@@ -277,17 +277,17 @@ function CustomAlert() {
     }
 
     this.registerPage = function () {
-		document.getElementById("dialogbox").style.display = "none";
-        document.getElementById("dialogoverlay").style.display = "none";
+		document.getElementById("alertBox").style.display = "none";
+        document.getElementById("alertBackground").style.display = "none";
 
-		document.getElementById('dialogboxhead').innerHTML = 
+		document.getElementById('alertBoxHead').innerHTML =
 			'<header id="header" style="padding-top: 0px;">' +
 				'<a id="categoryInfo" class="logo">' +
 					'<strong>Regist</strong>' +
 				'</a>' +
 			'</header>'
 
-		document.getElementById('dialogboxbody').innerHTML =
+		document.getElementById('alertBoxBody').innerHTML =
 			'<label for="username">아이디</label>' +
 			'<input id="username" type="text"/><br>' +
 			'<label for="password">비밀번호</label>' +
@@ -295,15 +295,15 @@ function CustomAlert() {
 			'<label for="adminToken">관리자 토큰</label>' +
 			'<input id="adminToken" type="text"/>'
 
-		document.getElementById('dialogboxfoot').innerHTML = 
+		document.getElementById('alertBoxFoot').innerHTML =
 			'<button type="button" onclick="register()" style="margin-bottom: 0px;">done</button>'
 			
 		this.afterEach();
     }
 
 	this.afterEach = function () {
-		let dialogoverlay = document.getElementById("dialogoverlay");
-		let dialogbox = document.getElementById("dialogbox");
+		let dialogoverlay = document.getElementById("alertBackground");
+		let dialogbox = document.getElementById("alertBox");
 
 		let winH = window.innerHeight;
 		dialogoverlay.style.height = winH + "px";
@@ -313,7 +313,7 @@ function CustomAlert() {
 		dialogoverlay.style.display = "block";
 		dialogbox.style.display = "block";
 
-		document.getElementById("dialogboxhead").style.display = "block";
+		document.getElementById("alertBoxHead").style.display = "block";
 	}
 }
 
