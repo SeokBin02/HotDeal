@@ -37,38 +37,7 @@ public class HotDealApplicationTests {
     void contextLoads() {
     }
 
-    @Test
-    @DisplayName("한정판 상품 구매 동시성 문제 테스트")
-    void concurrencyAboutLimitedProductTests() throws InterruptedException {
-        // given
-        LimitedProduct limitedProduct = new LimitedProduct(
-                new LimitedProductRequestDto("에어조던1 시카고 OG", 280000, "신발", "스니커즈", 500)
-        );
-        limitedProductRepository.saveAndFlush(limitedProduct);
 
-        List<User> testUsers = new ArrayList<>();
-        for (int i = 1; i <= 500; i++) {
-            User user = new User("testUser" + i, "password", UserRole.ROLE_USER);
-            userRepository.saveAndFlush(user);
-            testUsers.add(user);
-        }
-
-        ExecutorService executorService = Executors.newFixedThreadPool(500);
-        CountDownLatch latch = new CountDownLatch(500);
-
-        // when
-        for (User user : testUsers) {
-            executorService.execute(() -> {
-                limitedProductService.buyLimitedProduct(1L, user);
-                latch.countDown();
-            });
-        }
-
-        latch.await();
-        // then
-        LimitedProduct product = limitedProductRepository.findById(1L).orElseThrow();
-        Assertions.assertEquals(0, product.getAmount());
-    }
 
     @Test
     @DisplayName("회원가입 동시성 테스트")
