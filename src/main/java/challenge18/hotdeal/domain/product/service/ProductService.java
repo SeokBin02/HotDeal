@@ -2,9 +2,7 @@ package challenge18.hotdeal.domain.product.service;
 
 import challenge18.hotdeal.common.util.ConditionValidate;
 import challenge18.hotdeal.common.util.Message;
-import challenge18.hotdeal.domain.product.dto.AllProductResponseDto;
-import challenge18.hotdeal.domain.product.dto.ProductSearchCondition;
-import challenge18.hotdeal.domain.product.dto.SelectProductResponseDto;
+import challenge18.hotdeal.domain.product.dto.*;
 import challenge18.hotdeal.domain.product.entity.Product;
 import challenge18.hotdeal.domain.product.repository.ProductRepository;
 import challenge18.hotdeal.domain.purchase.entity.Purchase;
@@ -16,6 +14,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -31,9 +35,24 @@ public class ProductService extends ConditionValidate {
 
         // 조건이 없을 경우 전날 판매 실적 기준 TopN
         if (checkConditionNull(condition)) {
-            return null;
-        }
+            Date now = new Date();
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+            String today = simpleDateFormat.format(now);
 
+            int year = now.getYear();
+            int month = now.getMonth();
+            int day = now.getDay()-1;
+            // 전날 기준
+            LocalDateTime start = LocalDateTime.of(year, month, day, 0, 0, 0);
+            LocalDateTime end = LocalDateTime.of(year, month, day, 23, 59, 59);
+
+            // test용
+//            LocalDateTime start = LocalDateTime.of(2023, 6, 8, 0, 0, 0);
+//            LocalDateTime end = LocalDateTime.of(2023, 6, 8, 23, 59, 59);
+
+            return new AllProductResponseDto(purchaseRepository.findTopN(today, start, end), false);
+
+        }
         // 조건 필터링
         return productRepository.findAllbyCondition(condition);
     }

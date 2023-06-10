@@ -19,9 +19,10 @@ public class SelectProductResponseDto {
         this.id = product.getId();
         this.productName = product.getProductName();
         this.price = product.getPrice();
-        this.amount = product.getAmount();
         this.categoryA = product.getCategoryA();
         this.categoryB = product.getCategoryB();
+        this.amount = product.getAmount();
+
     }
 
     public SelectProductResponseDto(LimitedProduct limitedProduct) {
@@ -42,5 +43,14 @@ public class SelectProductResponseDto {
     public SelectProductResponseDto(String productName, int price) {
         this.productName = productName;
         this.price = price;
+    }
+
+    public SelectProductResponseDto(Long id, String productName, int price, String categoryA, String categoryB, int amount) {
+        this.id = id;
+        this.productName = productName;
+        this.price = price;
+        this.categoryA = categoryA;
+        this.categoryB = categoryB;
+        this.amount = amount;
     }
 }

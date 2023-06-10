@@ -1,8 +1,6 @@
 package challenge18.hotdeal.domain.product.repository;
 
-import challenge18.hotdeal.domain.product.dto.AllProductResponseDto;
-import challenge18.hotdeal.domain.product.dto.ProductSearchCondition;
-import challenge18.hotdeal.domain.product.dto.SelectProductResponseDto;
+import challenge18.hotdeal.domain.product.dto.*;
 import challenge18.hotdeal.domain.product.entity.QProduct;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.QBean;
@@ -30,7 +28,8 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
                 .select(Projections.constructor(SelectProductResponseDto.class,
                         product.id,
                         product.productName,
-                        product.price))
+                        product.price
+                ))
                 .from(product)
                 .where(
                         goeProductId(condition.getQueryIndex()),
