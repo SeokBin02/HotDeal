@@ -5,6 +5,10 @@ import challenge18.hotdeal.common.util.Message;
 import challenge18.hotdeal.domain.limited.dto.LimitedProductRequestDto;
 import challenge18.hotdeal.domain.limited.dto.LimitedProductResponseDto;
 import challenge18.hotdeal.domain.limited.service.LimitedProductService;
+import challenge18.hotdeal.domain.product.dto.AllProductResponseDto;
+import challenge18.hotdeal.domain.product.dto.ProductSearchCondition;
+import challenge18.hotdeal.domain.product.dto.SelectProductResponseDto;
+import challenge18.hotdeal.domain.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -29,13 +33,13 @@ public class LimitedProductController {
 
     // 한정판 상품 목록 조회
     @GetMapping
-    public List<LimitedProductResponseDto> allLimitedProduct() {
-        return limitedProductService.allLimitedProduct();
+    public AllProductResponseDto allLimitedProduct(ProductSearchCondition condition) {
+        return limitedProductService.allLimitedProduct(condition);
     }
 
     // 한정판 상품 상세 조회
     @GetMapping("/{limitedProductId}")
-    public LimitedProductResponseDto selectLimitedProduct(@PathVariable Long limitedProductId) {
+    public SelectProductResponseDto selectLimitedProduct(@PathVariable Long limitedProductId) {
         return limitedProductService.selectLimitedProduct(limitedProductId);
     }
 

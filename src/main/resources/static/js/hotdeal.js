@@ -32,12 +32,13 @@ function search() {
 }
 
 function getUrl() {
+	const type = $('#product-type').val();
+
 	let url = '';
-	let productType = $('#product-type').val();
-	if (productType === 'normal') {
-		url = '/products'
+	if (type === 'normal') {
+		url = '/products';
 	} else {
-		url = '/limited-products'
+		url = '/limited-products';
 	}
 	return url;
 }
@@ -57,7 +58,7 @@ function getData(pageNumber) {
 			queryLimit: pageSize
 		},
 		success: function (response) {
-			//console.log(response)
+			console.log(response)
 			$('#product-list').empty();
 			$.each(response.content, (i, post) => {
 				let temp_html =
