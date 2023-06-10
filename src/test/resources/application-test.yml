@@ -3,19 +3,19 @@ spring:
     master:
       hikari:
         driver-class-name: org.h2.Driver
-        jdbc-url: jdbc:h2:mem:db;MODE=MYSQL;
+        jdbc-url: jdbc:h2:mem:db;MODE=MYSQL;DB_CLOSE_DELAY=-1
         username: sa
         password:
     slave1:
       hikari:
         driver-class-name: org.h2.Driver
-        jdbc-url: jdbc:h2:mem:db;MODE=MYSQL;
+        jdbc-url: jdbc:h2:mem:db;MODE=MYSQL;DB_CLOSE_DELAY=-1
         username: sa
         password:
     slave2:
       hikari:
         driver-class-name: org.h2.Driver
-        jdbc-url: jdbc:h2:mem:db;MODE=MYSQL;
+        jdbc-url: jdbc:h2:mem:db;MODE=MYSQL;DB_CLOSE_DELAY=-1
         username: sa
         password:
   data:
