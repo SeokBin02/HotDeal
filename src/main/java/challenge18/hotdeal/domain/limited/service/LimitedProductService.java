@@ -49,6 +49,7 @@ public class LimitedProductService extends ConditionValidate {
             return limitedProductRepository.customFindAll(condition);
         }
 
+        System.out.println("한정판 상품을 조회하는 조건이 입력되었습니다.");
         return limitedProductRepository.findAllByCondition(condition);
     }
 

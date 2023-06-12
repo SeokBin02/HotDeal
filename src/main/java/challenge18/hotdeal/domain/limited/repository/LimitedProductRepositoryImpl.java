@@ -14,7 +14,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static challenge18.hotdeal.domain.limited.entity.QLimitedProduct.limitedProduct;
-import static challenge18.hotdeal.domain.product.entity.QProduct.product;
 
 @Repository
 @RequiredArgsConstructor
@@ -49,10 +48,10 @@ public class LimitedProductRepositoryImpl implements LimitedProductRepositoryCus
     public AllProductResponseDto findAllByCondition(ProductSearchCondition condition) {
         List<SelectProductResponseDto> content = queryFactory
                 .select(Projections.constructor(SelectProductResponseDto.class,
-                        product.id,
-                        product.productName,
-                        product.price))
-                .from(product)
+                        limitedProduct.id,
+                        limitedProduct.productName,
+                        limitedProduct.price))
+                .from(limitedProduct)
                 .where(
                         goeLimitedProductId(condition.getQueryIndex()),
                         eqMainCategory(condition.getMainCategory()),
@@ -61,7 +60,7 @@ public class LimitedProductRepositoryImpl implements LimitedProductRepositoryCus
                         loeMaxPrice(condition.getMaxPrice()),
                         matchKeyword(condition.getKeyword())
                 )
-                .orderBy(product.id.asc())
+                .orderBy(limitedProduct.id.asc())
                 .limit(condition.getQueryLimit() + 1) // 페이지 사이즈
                 .fetch();
         boolean next; // 다음 페이지 유(true)/무(false)

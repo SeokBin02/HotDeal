@@ -34,6 +34,13 @@ public class LimitedProductController {
     // 한정판 상품 목록 조회
     @GetMapping
     public AllProductResponseDto allLimitedProduct(ProductSearchCondition condition) {
+        System.out.println("condition.getMinPrice() = " + condition.getMinPrice());
+        System.out.println("condition.getMaxPrice() = " + condition.getMaxPrice());
+        System.out.println("condition.getMainCategory() = " + condition.getMainCategory());
+        System.out.println("condition.getSubCategory() = " + condition.getSubCategory());
+        System.out.println("condition.getKeyword() = " + condition.getKeyword());
+        System.out.println("condition.getQueryIndex() = " + condition.getQueryIndex());
+        System.out.println("condition.getQueryLimit() = " + condition.getQueryLimit());
         return limitedProductService.allLimitedProduct(condition);
     }
 
