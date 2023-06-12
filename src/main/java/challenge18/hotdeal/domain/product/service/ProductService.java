@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -35,24 +36,20 @@ public class ProductService extends ConditionValidate {
 
         // 조건이 없을 경우 전날 판매 실적 기준 TopN
         if (checkConditionNull(condition)) {
-            Date now = new Date();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+
+            // 오늘
+            Date now = new Date();
             String today = simpleDateFormat.format(now);
 
-            int year = now.getYear();
-            int month = now.getMonth();
-            int day = now.getDay()-1;
-            // 전날 기준
-            LocalDateTime start = LocalDateTime.of(year, month, day, 0, 0, 0);
-            LocalDateTime end = LocalDateTime.of(year, month, day, 23, 59, 59);
+            // 어제
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DATE, -1);
+            String yesterday = simpleDateFormat.format(calendar.getTime());
 
-            // test용
-//            LocalDateTime start = LocalDateTime.of(2023, 6, 8, 0, 0, 0);
-//            LocalDateTime end = LocalDateTime.of(2023, 6, 8, 23, 59, 59);
-
-            return new AllProductResponseDto(purchaseRepository.findTopN(today, start, end), false);
-
+            return new AllProductResponseDto(purchaseRepository.findTopN(today, yesterday), false);
         }
+
         // 조건 필터링
         return productRepository.findAllbyCondition(condition);
     }

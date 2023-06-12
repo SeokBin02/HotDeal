@@ -35,7 +35,8 @@ public class PurchaseRepositoryImpl implements PurchaseRespositoryCustom {
 
     @Override
     @Cacheable(cacheNames = POPULAR_ITEM, cacheManager = "redisCacheManager", key = "#today")
-    public List<SelectProductResponseDto> findTopN(String today, LocalDateTime start, LocalDateTime end) {
+    public List<SelectProductResponseDto> findTopN(String today, String yesterday) {
+        System.out.println("yesterday = " + yesterday);
 
         EntityManager em = emf.createEntityManager();
         String sql = "SELECT p.product_id as product_id, p.product_name as productName, p.price, " +
@@ -43,17 +44,13 @@ public class PurchaseRepositoryImpl implements PurchaseRespositoryCustom {
                 "FROM purchase pr " +
                 "LEFT JOIN products p on p.product_id = pr.product_product_id " +
                 "WHERE pr.product_product_id IS NOT NULL " +
-                "AND pr.create_at BETWEEN :start AND :end " +
-//                "AND DATE_FORMAT(pr.create_at, '%Y-%m-%d') = '2023-06-08' " +
-//                "AND pr.create_at >= :start " +
-//                "AND pr.create_at < :end " +
+                "AND pr.purchase_date = :yesterday " +
                 "GROUP BY p.product_id " +
                 "ORDER BY SUM(pr.amount) DESC " +
                 "LIMIT 20";
 
         Query nativeQuery = em.createNativeQuery(sql, "SelectProductResponseMapping");
-        nativeQuery.setParameter("start", start);
-        nativeQuery.setParameter("end", end);
+        nativeQuery.setParameter("yesterday", yesterday);
         List<SelectProductResponseDto> productList = nativeQuery.getResultList();
         return productList;
     }
