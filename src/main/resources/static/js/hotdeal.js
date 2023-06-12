@@ -1,29 +1,13 @@
 // custom functions
-var indexList = [];
-var nowPage;
-var pageSize = 20;
-var token = '';
+let indexList = [];
+let nowPage;
+const pageSize = 20;
 let customAlert = new CustomAlert();
 
 $(document).ready(function () {
-	// getData(0); // TopN
+	getData(0); // TopN
 	set_main_category();
 	set_sign_button();
-
-	// document.body.innerHTML =
-	// 	document.body.innerHTML +
-	// 	'<div id="alertBackground">' +
-	// 	'</div>' +
-	// 	'<div id="alertBox" class="slit-in-vertical">' +
-	// 		'<div>' +
-	// 			'<div id="alertBoxHead">' +
-	// 			'</div>' +
-	// 			'<div id="alertBoxBody" style="padding-top: 30px; padding-bottom: 0px">' +
-	// 			'</div>' +
-	// 			'<div id="alertBoxFoot" style="text-align: center; margin-top: 15px; margin-bottom: 50px;">' +
-	// 			'</div>' +
-	// 		'</div>' +
-	// 	'</div>';
 });
 
 function search() {
@@ -74,7 +58,7 @@ function getData(pageNumber) {
 			// 1페이지 조회시, 2페이지 조회에 참고할 product_id가 등록된다.
 			// 이전 버튼으로 다시 0페이지로 돌아갈 경우, 1페이지 조회에 참고할 product_id는 이미 등록되어 있다.
 			// 이럴 때는 등록하면 안됨.
-			if (indexList.length === pageNumber + 1) {
+			if (response['next'] && (indexList.length === pageNumber + 1)) {
 				indexList.push(response.content[pageSize - 1].id + 1);
 			}
 
@@ -83,6 +67,7 @@ function getData(pageNumber) {
 			createPageList(response['next']);
 		},
 		error: function (e) {
+			console.log(e);
 			alert("ERROR: ", e);
 			console.log("ERROR: ", e);
 		},
@@ -137,7 +122,7 @@ function detail(id) {
 }
 
 function buy(id) {
-	if (token === '') {
+	if (localStorage.getItem("token") == null) {
 		alert("로그인이 필요합니다.");
 	} else {
 		$.ajax({
@@ -145,7 +130,7 @@ function buy(id) {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				'Authorization': token
+				'Authorization': localStorage.getItem("token")
 			},
 			data: JSON.stringify({
 				quantity: $('#quantity').val(),
@@ -167,6 +152,11 @@ function cancel() {
 	document.getElementById("alertBox").style.display = "none";
 	document.getElementById("alertBackground").style.display = "none";
 }
+
+// 모달 창 외부 alertBackground 클릭시
+$(document).on("click", "div.alertBackground", function () {
+	cancel();
+});
 
 function register() {
 	let adminToken = $('#adminToken').val()
@@ -204,7 +194,7 @@ function login() {
 	    }),
 	    success: function (output, status, xhr) {
 			alert(output.msg);
-			token = xhr.getResponseHeader('Authorization');
+			localStorage.setItem("token", xhr.getResponseHeader('Authorization'));
 			set_sign_button();
 	    },
 		error: function (request, status, error) {
@@ -216,7 +206,8 @@ function login() {
 }
 
 function logout() {
-	token = '';
+	alert("로그아웃 성공");
+	localStorage.removeItem("token");
 	set_sign_button();
 }
 
@@ -230,15 +221,27 @@ function CustomAlert() {
 				'</a>' +
 			'</header>';
 
-		document.getElementById('alertBoxBody').innerHTML =
-			'<table>' +
-				'<tbody>' +
-					'<tr><td>품번</td><td id="productInfo">' + productId + '</td></tr>' +
-					'<tr><td>가격</td><td>' + price.toLocaleString('ko-KR') + '원</td></tr>' +
-					'<tr><td>재고</td><td>' + amount.toLocaleString('ko-KR') + '개</td></tr>' +
-					'<tr><td>구매수량</td><td><input type="number" id="quantity"></td></tr>' +
-				'</tbody>' +
-			'</table>' 
+		if ($('#product-type').val() === 'normal') {
+			document.getElementById('alertBoxBody').innerHTML =
+				'<table>' +
+					'<tbody>' +
+						'<tr><td>품번</td><td id="productInfo">' + productId + '</td></tr>' +
+						'<tr><td>가격</td><td>' + price.toLocaleString('ko-KR') + '원</td></tr>' +
+						'<tr><td>재고</td><td>' + amount.toLocaleString('ko-KR') + '개</td></tr>' +
+						'<tr><td>구매수량</td><td><input type="number" id="quantity"></td></tr>' +
+					'</tbody>' +
+				'</table>'
+		} else {
+			document.getElementById('alertBoxBody').innerHTML =
+				'<table>' +
+					'<tbody>' +
+						'<tr><td>품번</td><td id="productInfo">' + productId + '</td></tr>' +
+						'<tr><td>가격</td><td>' + price.toLocaleString('ko-KR') + '원</td></tr>' +
+						'<tr><td>재고</td><td>' + amount.toLocaleString('ko-KR') + '개</td></tr>' +
+						'<tr><td>구매수량</td><td><input type="number" id="quantity" value=1 readonly></td></tr>' +
+					'</tbody>' +
+				'</table>'
+		}
 
 		document.getElementById('alertBoxFoot').innerHTML =
 			'<div style="width: 50%; float: left;">' +
@@ -318,9 +321,10 @@ function CustomAlert() {
 }
 
 function set_sign_button() {
+	//console.log(localStorage.getItem("hiy"));
 	$('#sign-button').empty();
 	let loginHtml = '';
-	if (token === '') {
+	if (localStorage.getItem("token") == null) {
 		loginHtml = `<button onclick="customAlert.loginPage()" type="button" id="login-button" style="margin-top: 0px; margin-bottom: 20px;">Login</button>`
 	} else {
 		loginHtml = `<button onclick="logout()" type="button" id="logout-button" style="margin-top: 0px; margin-bottom: 20px;">Logout</button>`
