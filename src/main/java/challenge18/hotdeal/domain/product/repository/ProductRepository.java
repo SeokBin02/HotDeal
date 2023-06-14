@@ -12,7 +12,6 @@ import java.util.Optional;
 import static challenge18.hotdeal.common.config.Redis.RedisCacheKey.PRODUCT;
 
 public interface ProductRepository extends JpaRepository<Product, Long>, ProductRepositoryCustom {
-    @Cacheable(value=PRODUCT, cacheManager = "redisCacheManager")
     @Query(value = "SELECT p FROM Product p WHERE p.id = :productId")
     Optional<Product> findById(@Param("productId") Long productId);
 }
