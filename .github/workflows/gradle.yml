@@ -73,4 +73,5 @@ jobs:
           docker pull ${{ secrets.DOCKER_USERNAME }}/hotdeal-cicd:${GITHUB_SHA::7}
           docker tag ${{ secrets.DOCKER_USERNAME }}/hotdeal-cicd:${GITHUB_SHA::7} hotdeal-cicd
           docker stop server
-          docker run -d --rm --name server -p 80:8080 hotdeal-cicd
+          docker rm server
+          docker run -d --name server -p 80:8080 hotdeal-cicd
