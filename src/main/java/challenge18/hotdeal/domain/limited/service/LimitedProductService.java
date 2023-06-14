@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class LimitedProductService extends ConditionValidate {
+public class LimitedProductService extends ConditionValidate{
 
     private final LimitedProductRepository limitedProductRepository;
     private final PurchaseRepository purchaseRepository;
