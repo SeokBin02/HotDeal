@@ -1,5 +1,6 @@
 package challenge18.hotdeal.domain.limited.controller;
 
+import challenge18.hotdeal.common.facade.RedissonLockFacade;
 import challenge18.hotdeal.common.security.UserDetailsImpl;
 import challenge18.hotdeal.common.util.Message;
 import challenge18.hotdeal.domain.limited.dto.LimitedProductRequestDto;
@@ -22,6 +23,7 @@ import java.util.List;
 public class LimitedProductController {
 
     private final LimitedProductService limitedProductService;
+    private final RedissonLockFacade redissonLockFacade;
 
     // 한정판 상품 등록
 //    @Secured("ROLE_ADMIN")
@@ -54,7 +56,8 @@ public class LimitedProductController {
     @PostMapping("/{limitedProductId}")
     public ResponseEntity<Message> buyLimitedProduct(@PathVariable Long limitedProductId,
                                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return limitedProductService.buyLimitedProduct(limitedProductId, userDetails.getUser());
+        return redissonLockFacade.buy("limitedProduct", limitedProductId, 1, userDetails.getUser());
+//        return limitedProductService.buyLimitedProduct(limitedProductId, userDetails.getUser());
     }
 
 }
