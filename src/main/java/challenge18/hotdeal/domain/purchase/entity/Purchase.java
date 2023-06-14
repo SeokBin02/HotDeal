@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Getter
@@ -29,10 +31,19 @@ public class Purchase extends TimeStamped {
     @ManyToOne
     private LimitedProduct limitedProduct;
 
+    private String purchaseDate;
+
     public Purchase(int amount, User user, Product product, LimitedProduct limitedProduct) {
         this.amount = amount;
         this.user = user;
         this.product = product;
         this.limitedProduct = limitedProduct;
+    }
+    @PostPersist
+    private void setDate(){
+        LocalDateTime createAt = super.getCreateAt();
+        if( createAt != null ){
+            this.purchaseDate = createAt.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        }
     }
 }
