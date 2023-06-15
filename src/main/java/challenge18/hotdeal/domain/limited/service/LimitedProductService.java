@@ -4,7 +4,6 @@ import challenge18.hotdeal.common.Enum.UserRole;
 import challenge18.hotdeal.common.util.ConditionValidate;
 import challenge18.hotdeal.common.util.Message;
 import challenge18.hotdeal.domain.limited.dto.LimitedProductRequestDto;
-import challenge18.hotdeal.domain.limited.dto.LimitedProductResponseDto;
 import challenge18.hotdeal.domain.limited.entity.LimitedProduct;
 import challenge18.hotdeal.domain.limited.repository.LimitedProductRepository;
 import challenge18.hotdeal.domain.product.dto.AllProductResponseDto;
@@ -19,13 +18,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class LimitedProductService extends ConditionValidate {
+public class LimitedProductService extends ConditionValidate{
 
     private final LimitedProductRepository limitedProductRepository;
     private final PurchaseRepository purchaseRepository;

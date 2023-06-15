@@ -35,6 +35,8 @@ public class QPurchase extends EntityPathBase<Purchase> {
 
     public final challenge18.hotdeal.domain.product.entity.QProduct product;
 
+    public final StringPath purchaseDate = createString("purchaseDate");
+
     public final challenge18.hotdeal.domain.user.entity.QUser user;
 
     public QPurchase(String variable) {
