@@ -43,6 +43,9 @@ function getData(pageNumber) {
 		},
 		success: function (response) {
 			console.log(response)
+			if (response.content.length === 0) {
+				alert("검색 결과가 없습니다.")
+			}
 			$('#product-list').empty();
 			$.each(response.content, (i, post) => {
 				let temp_html =
@@ -124,7 +127,14 @@ function detail(id) {
 function buy(id) {
 	if (localStorage.getItem("token") == null) {
 		alert("로그인이 필요합니다.");
+		cancel();
+		customAlert.loginPage();
 	} else {
+		let quantity = $('#quantity').val();
+		if (quantity <= 0 || quantity === null) {
+			alert("구매 수량을 입력해주세요.")
+			return;
+		}
 		$.ajax({
 			url: getUrl() + '/' + id,
 			method: 'POST',
@@ -133,7 +143,7 @@ function buy(id) {
 				'Authorization': localStorage.getItem("token")
 			},
 			data: JSON.stringify({
-				quantity: $('#quantity').val(),
+				quantity: quantity,
 			}),
 			success: function (response) {
 				console.log(response);
@@ -162,13 +172,30 @@ function register() {
 	let adminToken = $('#adminToken').val()
 	let admin = adminToken !== '';
 
+	let username = $('#username').val();
+	let password = $('#password').val();
+
+	if (username.length === 0) {
+		if (password.length === 0) {
+			alert("아이디/비밀번호를 입력하세요.");
+			return;
+		}
+		alert("아이디를 입력하세요.");
+		return;
+	}
+
+	if (password.length === 0) {
+		alert("비밀번호를 입력하세요.");
+		return;
+	}
+
 	$.ajax({
 		url: '/users/signup',
 		method: 'POST',
 		headers: {'Content-Type': 'application/json'},
 		data: JSON.stringify({
-			userId: $('#username').val(),
-			password: $('#password').val(),
+			userId: username,
+			password: password,
 			admin: admin,
 			adminToken: adminToken
 		}),
@@ -180,7 +207,7 @@ function register() {
 		error: function (request, status, error) {
 			alert(JSON.parse(request.responseText).msg);
 		},
-	})
+	});
 }
 
 function login() {

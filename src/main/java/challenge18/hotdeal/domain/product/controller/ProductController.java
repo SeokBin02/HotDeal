@@ -1,5 +1,6 @@
 package challenge18.hotdeal.domain.product.controller;
 
+import challenge18.hotdeal.common.facade.RedissonLockFacade;
 import challenge18.hotdeal.common.security.UserDetailsImpl;
 import challenge18.hotdeal.common.util.Message;
 import challenge18.hotdeal.domain.product.dto.AllProductResponseDto;
@@ -19,6 +20,7 @@ import java.util.Map;
 public class ProductController {
 
     private final ProductService productService;
+    private final RedissonLockFacade redissonLockFacade;
 
     // 상품 목록 조회
     @GetMapping("")
@@ -45,6 +47,7 @@ public class ProductController {
     public ResponseEntity<Message> buyLimitedProduct(@PathVariable Long productId,
                                                      @RequestBody Map<String, Integer> map,
                                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return productService.buyProduct(productId, map.get("quantity"), userDetails.getUser());
+        return redissonLockFacade.buy("product", productId, map.get("quantity"), userDetails.getUser());
+//        return productService.buyProduct(productId, map.get("quantity"), userDetails.getUser());
     }
 }
