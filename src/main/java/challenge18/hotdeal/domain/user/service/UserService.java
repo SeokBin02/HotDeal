@@ -31,13 +31,18 @@ import static challenge18.hotdeal.common.config.Redis.RedisCacheKey.USER;
 public class UserService {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
-    private static String ADMINTOKEN = "E7F839DAC8507A74B9D1F3F287A2640076BF5CB38F44F5E9449E13FD5ED650AC";
+    private final static String ADMINTOKEN = "E7F839DAC8507A74B9D1F3F287A2640076BF5CB38F44F5E9449E13FD5ED650AC";
 
 
     // 회원가입
     @Transactional
     public ResponseEntity<Message> signup(SignupRequest request) {
         UserRole role = UserRole.ROLE_USER;
+
+        // 유저 중복 체크
+        if (userRepository.findById(request.getUserId()).isPresent()) {
+            throw new DuplicateRequestException("중복된 회원이 이미 존재합니다.");
+        }
 
         // 관리자 회원가입 체크
         if(request.isAdmin()){
@@ -47,8 +52,10 @@ public class UserService {
             role = UserRole.ROLE_ADMIN;
         }
 
+        User user = new User(request.getUserId(), request.getPassword(), role);
+
         try {
-            userRepository.insert(request.getUserId(), request.getPassword(), role.toString());
+            userRepository.save(user);
         } catch (Exception e) {
             throw new DuplicateRequestException("중복된 회원이 이미 존재합니다.");
         }
@@ -78,4 +85,5 @@ public class UserService {
         log.info("db접근");
         return userRepository.findByUserId(userId);
     }
+
 }

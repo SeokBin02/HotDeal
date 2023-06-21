@@ -16,8 +16,4 @@ public interface UserRepository extends JpaRepository<User, String> {
     @Transactional(readOnly = true)
     @Cacheable(value = USER, cacheManager = "redisCacheManager")
     Optional<User> findByUserId(String userId);
-
-    @Modifying
-    @Query(value = "insert into users (user_id, password, role) VALUES (:userId, :password, :role)", nativeQuery = true)
-    void insert(@Param("userId") String userId, @Param("password") String password, @Param("role") String role);
 }

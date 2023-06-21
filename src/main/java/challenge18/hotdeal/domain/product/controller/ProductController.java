@@ -25,15 +25,7 @@ public class ProductController {
     // 상품 목록 조회
     @GetMapping("")
     public AllProductResponseDto allProduct(ProductSearchCondition condition) {
-//        System.out.println("condition.getMinPrice() = " + condition.getMinPrice());
-//        System.out.println("condition.getMaxPrice() = " + condition.getMaxPrice());
-//        System.out.println("condition.getMainCategory() = " + condition.getMainCategory());
-//        System.out.println("condition.getSubCategory() = " + condition.getSubCategory());
-//        System.out.println("condition.getKeyword() = " + condition.getKeyword());
-//        System.out.println("condition.getQueryIndex() = " + condition.getQueryIndex());
-//        System.out.println("condition.getQueryLimit() = " + condition.getQueryLimit());
         return productService.allProduct(condition);
-
     }
 
     // 상품 상세 조회
@@ -48,6 +40,5 @@ public class ProductController {
                                                      @RequestBody Map<String, Integer> map,
                                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return redissonLockFacade.buy("product", productId, map.get("quantity"), userDetails.getUser());
-//        return productService.buyProduct(productId, map.get("quantity"), userDetails.getUser());
     }
 }
