@@ -13,7 +13,5 @@ import java.util.Optional;
 import static challenge18.hotdeal.common.config.Redis.RedisCacheKey.USER;
 
 public interface UserRepository extends JpaRepository<User, String> {
-    @Transactional(readOnly = true)
-    @Cacheable(value = USER, cacheManager = "redisCacheManager")
-    Optional<User> findByUserId(String userId);
+
 }

@@ -67,7 +67,7 @@ public class UserService {
     public ResponseEntity<Message> login(LoginRequest request, HttpServletResponse response) {
         log.info("service");
         // 회원정보 존재 유무 체크
-        Optional<User> user = checkUserExist(request.getUserId());
+        Optional<User> user = findUserById(request.getUserId());
         if(!user.isPresent()){
             throw new NullPointerException("입력하신 회원정보가 존재하지 않습니다.");
         }
