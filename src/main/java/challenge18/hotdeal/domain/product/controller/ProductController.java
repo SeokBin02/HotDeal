@@ -24,14 +24,14 @@ public class ProductController {
 
     // 상품 목록 조회
     @GetMapping
-    public AllProductResponseDto allProduct(ProductSearchCondition condition) {
-        return productService.allProduct(condition);
+    public AllProductResponseDto getProducts(ProductSearchCondition condition) {
+        return productService.getProducts(condition);
     }
 
     // 상품 상세 조회
     @GetMapping("/{productId}")
-    public SelectProductResponseDto selectProduct(@PathVariable Long productId){
-        return productService.selectProduct(productId);
+    public SelectProductResponseDto getProductDetail(@PathVariable Long productId){
+        return productService.getProductDetail(productId);
     }
 
     // 상품 구매

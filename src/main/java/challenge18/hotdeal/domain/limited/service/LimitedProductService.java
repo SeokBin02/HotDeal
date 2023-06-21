@@ -1,7 +1,6 @@
 package challenge18.hotdeal.domain.limited.service;
 
 import challenge18.hotdeal.common.Enum.UserRole;
-import challenge18.hotdeal.common.util.ConditionValidate;
 import challenge18.hotdeal.common.util.Message;
 import challenge18.hotdeal.domain.limited.dto.LimitedProductRequestDto;
 import challenge18.hotdeal.domain.limited.entity.LimitedProduct;
@@ -21,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class LimitedProductService extends ConditionValidate{
+public class LimitedProductService {
 
     private final LimitedProductRepository limitedProductRepository;
     private final PurchaseRepository purchaseRepository;
@@ -37,11 +36,9 @@ public class LimitedProductService extends ConditionValidate{
     }
 
     // 한정판 상품 전체 조회
-    public AllProductResponseDto allLimitedProduct(ProductSearchCondition condition) {
-        condition.setCondition(validateInput(condition));
-
+    public AllProductResponseDto getLimitedProducts(ProductSearchCondition condition) {
         // 조건이 없을 경우 모든 한정판 상품 조회
-        if (checkConditionNull(condition)) {
+        if (condition.isEmpty()) {
             return limitedProductRepository.customFindAll(condition);
         }
 
@@ -61,18 +58,18 @@ public class LimitedProductService extends ConditionValidate{
             return new ResponseEntity<>(new Message("로그인이 필요합니다."), HttpStatus.BAD_REQUEST);
         }
 
-        LimitedProduct limitedProduct = checkExistLimitedProduct(limitedProductId);
+        LimitedProduct limitedProduct = findLimitedProductById(limitedProductId);
 
         if (limitedProduct.getAmount() <= 0) {
             throw new IllegalArgumentException("상품 재고가 없습니다.");
         }
 
         limitedProduct.buy();
-        purchaseRepository.save(new Purchase(1, user, null, limitedProduct));
+        purchaseRepository.save(new Purchase(1, user, limitedProduct));
         return new ResponseEntity<>(new Message("한정판 상품 구매 성공"), HttpStatus.OK);
     }
 
-    public LimitedProduct checkExistLimitedProduct(Long limitedProductId) {
+    public LimitedProduct findLimitedProductById(Long limitedProductId) {
         return limitedProductRepository.findById(limitedProductId).orElseThrow(
                 () -> new IllegalArgumentException("상품이 존재하지 않습니다."));
     }
