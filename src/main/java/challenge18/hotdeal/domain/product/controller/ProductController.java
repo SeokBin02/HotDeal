@@ -23,7 +23,7 @@ public class ProductController {
     private final RedissonLockFacade redissonLockFacade;
 
     // 상품 목록 조회
-    @GetMapping("")
+    @GetMapping
     public AllProductResponseDto allProduct(ProductSearchCondition condition) {
         return productService.allProduct(condition);
     }
@@ -36,9 +36,9 @@ public class ProductController {
 
     // 상품 구매
     @PostMapping("/{productId}")
-    public ResponseEntity<Message> buyLimitedProduct(@PathVariable Long productId,
-                                                     @RequestBody Map<String, Integer> map,
-                                                     @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<Message> buyProduct(@PathVariable Long productId,
+                                              @RequestBody Map<String, Integer> map,
+                                              @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return redissonLockFacade.buy("product", productId, map.get("quantity"), userDetails.getUser());
     }
 }

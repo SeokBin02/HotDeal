@@ -26,7 +26,6 @@ public class ProductSearchCondition {
         this.keyword = keyword;
         this.queryIndex = queryIndex;
         this.queryLimit = queryLimit;
-
     }
 
     public void setCondition(ProductSearchCondition condition){
