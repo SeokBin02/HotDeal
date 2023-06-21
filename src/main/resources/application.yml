@@ -33,3 +33,4 @@ spring:
       #      host: redis-test-001.3lrrfy.0001.apn2.cache.amazonaws.com -> 배포 전 주석 해제
       host: localhost # -> 배포 전 주석 처리
       port: 6379
+    admin-token: E7F839DAC8507A74B9D1F3F287A2640076BF5CB38F44F5E9449E13FD5ED650AC

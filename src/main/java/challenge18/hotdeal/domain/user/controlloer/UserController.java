@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
@@ -28,7 +27,6 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<Message> login(@RequestBody LoginRequest request, HttpServletResponse response){
-        log.info("controller");
         return userService.login(request, response);
     }
 }
