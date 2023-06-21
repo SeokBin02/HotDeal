@@ -49,8 +49,8 @@ public class LimitedProductService extends ConditionValidate{
     }
 
     // 한정판 상품 상세 조회
-    public SelectProductResponseDto selectLimitedProduct(Long limitedProductId) {
-        LimitedProduct limitedProduct = checkExistLimitedProduct(limitedProductId);
+    public SelectProductResponseDto getLimitedProductDetail(Long limitedProductId) {
+        LimitedProduct limitedProduct = findLimitedProductById(limitedProductId);
         return new SelectProductResponseDto(limitedProduct);
     }
 

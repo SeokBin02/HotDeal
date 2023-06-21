@@ -25,29 +25,21 @@ import java.util.Date;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class ProductService extends ConditionValidate {
+public class ProductService{
 
     private final ProductRepository productRepository;
     private final PurchaseRepository purchaseRepository;
 
     // 상품 전체 조회 (필터링)
-    public AllProductResponseDto allProduct(ProductSearchCondition condition) {
-        condition.setCondition(validateInput(condition));
+    public AllProductResponseDto getProducts(ProductSearchCondition condition) {
 
         // 조건이 없을 경우 전날 판매 실적 기준 TopN
         if (checkConditionNull(condition)) {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
 
             // 오늘
-            Date now = new Date();
-            String today = simpleDateFormat.format(now);
-
-            // 어제
-            Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.DATE, -1);
-            String yesterday = simpleDateFormat.format(calendar.getTime());
-
-            return new AllProductResponseDto(purchaseRepository.findTopN(today, yesterday), false);
+            LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+            return new AllProductResponseDto(purchaseRepository.findTopN(today), false);
         }
 
         // 조건 필터링

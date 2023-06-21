@@ -35,14 +35,14 @@ public class LimitedProductController {
 
     // 한정판 상품 목록 조회
     @GetMapping
-    public AllProductResponseDto allLimitedProduct(ProductSearchCondition condition) {
-        return limitedProductService.allLimitedProduct(condition);
+    public AllProductResponseDto getLimitedProducts(ProductSearchCondition condition) {
+        return limitedProductService.getLimitedProducts(condition);
     }
 
     // 한정판 상품 상세 조회
     @GetMapping("/{limitedProductId}")
-    public SelectProductResponseDto selectLimitedProduct(@PathVariable Long limitedProductId) {
-        return limitedProductService.selectLimitedProduct(limitedProductId);
+    public SelectProductResponseDto getLimitedProductDetail(@PathVariable Long limitedProductId) {
+        return limitedProductService.getLimitedProductDetail(limitedProductId);
     }
 
     // 한정판 상품 구매
