@@ -27,29 +27,22 @@ public class LimitedProductController {
 
     // 한정판 상품 등록
 //    @Secured("ROLE_ADMIN")
-    @PostMapping("")
-    public ResponseEntity<Message> registrationLimitedProduct(@RequestBody LimitedProductRequestDto requestDto,
+    @PostMapping
+    public ResponseEntity<Message> registerLimitedProduct(@RequestBody LimitedProductRequestDto requestDto,
                                                               @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return limitedProductService.registrationLimitedProduct(requestDto, userDetails.getUser());
+        return limitedProductService.registerLimitedProduct(requestDto, userDetails.getUser());
     }
 
     // 한정판 상품 목록 조회
     @GetMapping
-    public AllProductResponseDto allLimitedProduct(ProductSearchCondition condition) {
-        System.out.println("condition.getMinPrice() = " + condition.getMinPrice());
-        System.out.println("condition.getMaxPrice() = " + condition.getMaxPrice());
-        System.out.println("condition.getMainCategory() = " + condition.getMainCategory());
-        System.out.println("condition.getSubCategory() = " + condition.getSubCategory());
-        System.out.println("condition.getKeyword() = " + condition.getKeyword());
-        System.out.println("condition.getQueryIndex() = " + condition.getQueryIndex());
-        System.out.println("condition.getQueryLimit() = " + condition.getQueryLimit());
-        return limitedProductService.allLimitedProduct(condition);
+    public AllProductResponseDto getLimitedProducts(ProductSearchCondition condition) {
+        return limitedProductService.getLimitedProducts(condition);
     }
 
     // 한정판 상품 상세 조회
     @GetMapping("/{limitedProductId}")
-    public SelectProductResponseDto selectLimitedProduct(@PathVariable Long limitedProductId) {
-        return limitedProductService.selectLimitedProduct(limitedProductId);
+    public SelectProductResponseDto getLimitedProductDetail(@PathVariable Long limitedProductId) {
+        return limitedProductService.getLimitedProductDetail(limitedProductId);
     }
 
     // 한정판 상품 구매
@@ -57,7 +50,6 @@ public class LimitedProductController {
     public ResponseEntity<Message> buyLimitedProduct(@PathVariable Long limitedProductId,
                                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return redissonLockFacade.buy("limitedProduct", limitedProductId, 1, userDetails.getUser());
-//        return limitedProductService.buyLimitedProduct(limitedProductId, userDetails.getUser());
     }
 
 }

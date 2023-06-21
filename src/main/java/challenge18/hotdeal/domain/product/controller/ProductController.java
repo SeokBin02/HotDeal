@@ -23,31 +23,22 @@ public class ProductController {
     private final RedissonLockFacade redissonLockFacade;
 
     // 상품 목록 조회
-    @GetMapping("")
-    public AllProductResponseDto allProduct(ProductSearchCondition condition) {
-//        System.out.println("condition.getMinPrice() = " + condition.getMinPrice());
-//        System.out.println("condition.getMaxPrice() = " + condition.getMaxPrice());
-//        System.out.println("condition.getMainCategory() = " + condition.getMainCategory());
-//        System.out.println("condition.getSubCategory() = " + condition.getSubCategory());
-//        System.out.println("condition.getKeyword() = " + condition.getKeyword());
-//        System.out.println("condition.getQueryIndex() = " + condition.getQueryIndex());
-//        System.out.println("condition.getQueryLimit() = " + condition.getQueryLimit());
-        return productService.allProduct(condition);
-
+    @GetMapping
+    public AllProductResponseDto getProducts(ProductSearchCondition condition) {
+        return productService.getProducts(condition);
     }
 
     // 상품 상세 조회
     @GetMapping("/{productId}")
-    public SelectProductResponseDto selectProduct(@PathVariable Long productId){
-        return productService.selectProduct(productId);
+    public SelectProductResponseDto getProductDetail(@PathVariable Long productId){
+        return productService.getProductDetail(productId);
     }
 
     // 상품 구매
     @PostMapping("/{productId}")
-    public ResponseEntity<Message> buyLimitedProduct(@PathVariable Long productId,
-                                                     @RequestBody Map<String, Integer> map,
-                                                     @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<Message> buyProduct(@PathVariable Long productId,
+                                              @RequestBody Map<String, Integer> map,
+                                              @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return redissonLockFacade.buy("product", productId, map.get("quantity"), userDetails.getUser());
-//        return productService.buyProduct(productId, map.get("quantity"), userDetails.getUser());
     }
 }
