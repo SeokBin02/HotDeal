@@ -28,7 +28,7 @@ public class LimitedProductService extends ConditionValidate{
 
     // 한정판 상품 등록
     @Transactional(readOnly = false)
-    public ResponseEntity<Message> registrationLimitedProduct(LimitedProductRequestDto requestDto, User user) {
+    public ResponseEntity<Message> registerLimitedProduct(LimitedProductRequestDto requestDto, User user) {
         if (user.getRole() == UserRole.ROLE_USER) {
             return new ResponseEntity<>(new Message("관리자가 아닙니다."), HttpStatus.BAD_REQUEST);
         }
@@ -45,7 +45,6 @@ public class LimitedProductService extends ConditionValidate{
             return limitedProductRepository.customFindAll(condition);
         }
 
-        System.out.println("한정판 상품을 조회하는 조건이 입력되었습니다.");
         return limitedProductRepository.findAllByCondition(condition);
     }
 
