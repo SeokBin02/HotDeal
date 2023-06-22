@@ -2,8 +2,10 @@ package challenge18.hotdeal.domain.limited.service;
 
 import challenge18.hotdeal.common.Enum.UserRole;
 import challenge18.hotdeal.common.util.Message;
+import challenge18.hotdeal.domain.limited.document.LimitedProductDocument;
 import challenge18.hotdeal.domain.limited.dto.LimitedProductRequestDto;
 import challenge18.hotdeal.domain.limited.entity.LimitedProduct;
+import challenge18.hotdeal.domain.limited.repository.LimitedProductElasticSearchRepository;
 import challenge18.hotdeal.domain.limited.repository.LimitedProductRepository;
 import challenge18.hotdeal.domain.product.dto.AllProductResponseDto;
 import challenge18.hotdeal.domain.product.dto.ProductSearchCondition;
@@ -12,6 +14,8 @@ import challenge18.hotdeal.domain.purchase.entity.Purchase;
 import challenge18.hotdeal.domain.purchase.repository.PurchaseRepository;
 import challenge18.hotdeal.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -24,6 +28,11 @@ public class LimitedProductService {
 
     private final LimitedProductRepository limitedProductRepository;
     private final PurchaseRepository purchaseRepository;
+    private final LimitedProductElasticSearchRepository limitedProductElasticSearchRepository;
+
+    public Page<SelectProductResponseDto> getLimitedProductsES(ProductSearchCondition condition, Pageable pageable) {
+        return limitedProductElasticSearchRepository.findByCondition(condition, pageable);
+    }
 
     // 한정판 상품 등록
     @Transactional(readOnly = false)
@@ -31,7 +40,8 @@ public class LimitedProductService {
         if (user.getRole() == UserRole.ROLE_USER) {
             return new ResponseEntity<>(new Message("관리자가 아닙니다."), HttpStatus.BAD_REQUEST);
         }
-        limitedProductRepository.save(new LimitedProduct(requestDto));
+        LimitedProduct limitedProduct = new LimitedProduct(requestDto);
+        limitedProductRepository.save(limitedProduct);
         return new ResponseEntity<>(new Message("한정판 상품 등록 성공"), HttpStatus.OK);
     }
 

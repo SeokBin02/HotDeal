@@ -1,5 +1,6 @@
 package challenge18.hotdeal.domain.product.dto;
 
+import challenge18.hotdeal.domain.limited.document.LimitedProductDocument;
 import challenge18.hotdeal.domain.limited.entity.LimitedProduct;
 import challenge18.hotdeal.domain.product.document.ProductDocument;
 import challenge18.hotdeal.domain.product.entity.Product;
@@ -55,6 +56,12 @@ public class SelectProductResponseDto {
     }
 
     public SelectProductResponseDto(ProductDocument document) {
+        this.id = document.getProduct_id();
+        this.productName = document.getProduct_name();
+        this.price = document.getPrice();
+    }
+
+    public SelectProductResponseDto(LimitedProductDocument document) {
         this.id = document.getProduct_id();
         this.productName = document.getProduct_name();
         this.price = document.getPrice();
