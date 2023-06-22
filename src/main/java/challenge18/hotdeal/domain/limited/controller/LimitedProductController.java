@@ -11,6 +11,8 @@ import challenge18.hotdeal.domain.product.dto.ProductSearchCondition;
 import challenge18.hotdeal.domain.product.dto.SelectProductResponseDto;
 import challenge18.hotdeal.domain.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -33,8 +35,14 @@ public class LimitedProductController {
         return limitedProductService.registerLimitedProduct(requestDto, userDetails.getUser());
     }
 
-    // 한정판 상품 목록 조회
+    // 한정판 상품 목록 조회 - elasticsearch
     @GetMapping
+    public Page<SelectProductResponseDto> getLimitedProductsES(ProductSearchCondition condition, Pageable pageable) {
+        return limitedProductService.getLimitedProductsES(condition, pageable);
+    }
+
+    // 한정판 상품 목록 조회 - queryDSL
+    @GetMapping("/dsl")
     public AllProductResponseDto getLimitedProducts(ProductSearchCondition condition) {
         return limitedProductService.getLimitedProducts(condition);
     }
