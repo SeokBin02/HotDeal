@@ -1,6 +1,7 @@
 // custom functions
 let indexList = [];
 let nowPage;
+// let nowOffset;
 const pageSize = 20;
 let customAlert = new CustomAlert();
 
@@ -27,8 +28,9 @@ function getUrl() {
 	return url;
 }
 
-function getData(pageNumber) {
-	nowPage = pageNumber;
+// function getData(pageNumber) {
+function getData(startPage) {
+	// nowPage = pageNumber;
 	$.ajax({
 		url: getUrl(),
 		method: 'GET',
@@ -38,11 +40,13 @@ function getData(pageNumber) {
 			mainCategory: $('#main-category').val(),
 			subCategory: $('#sub-category').val(),
 			keyword: $('#keyword').val(),
-			queryIndex: indexList[pageNumber],
-			queryLimit: pageSize
+			// queryIndex: indexList[pageNumber],
+			// queryLimit: pageSize
+			page: startPage,
+			size: pageSize
 		},
 		success: function (response) {
-			console.log(response)
+			// console.log(response)
 			if (response.content.length === 0) {
 				alert("검색 결과가 없습니다.")
 			}
@@ -57,17 +61,24 @@ function getData(pageNumber) {
 				$('#product-list').append(temp_html);
 			});
 
+			// 페이지 버튼
+			if ($('ul.pagination li').length - 2 != response.totalPages) {
+				// 처음 불러왔을 때 페이지 목록 구성
+				$('ul.pagination').empty();
+				createPageList(response);
+			}
+
 			// 다음 페이지 조회시 참고할 product_id 등록
 			// 1페이지 조회시, 2페이지 조회에 참고할 product_id가 등록된다.
 			// 이전 버튼으로 다시 0페이지로 돌아갈 경우, 1페이지 조회에 참고할 product_id는 이미 등록되어 있다.
 			// 이럴 때는 등록하면 안됨.
-			if (response['next'] && (indexList.length === pageNumber + 1)) {
-				indexList.push(response.content[pageSize - 1].id + 1);
-			}
+			// if (response['next'] && (indexList.length === pageNumber + 1)) {
+			// 	indexList.push(response.content[pageSize - 1].id + 1);
+			// }
 
 			// '이전', '다음' 버튼 생성
-			$('ul.pagination').empty();
-			createPageList(response['next']);
+			// $('ul.pagination').empty();
+			// createPrevNextButton(response['next']);
 		},
 		error: function (e) {
 			console.log(e);
@@ -77,7 +88,59 @@ function getData(pageNumber) {
 	})
 }
 
-function createPageList(next) {
+function createPageList(response) {
+	totalPages = response.totalPages;
+
+	var pageNumber = response.pageable.pageNumber;
+
+	var numLinks = 10;
+
+	// 현재 1페이지가 아닐 경우, '이전' 버튼 생성
+	var first = '';
+	var prev = '';
+	if (pageNumber > 0) {
+		if (pageNumber !== 0) {
+			first = '<li class="page-item"><a class="page-link" style="margin: 0px 5px 0px 5px;">« 처음</a></li>';
+		}
+		prev = '<li class="page-item"><a class="page-link" style="margin: 0px 5px 0px 5px;">‹ 이전</a></li>';
+	} else {
+		prev = ''; // 1페이지에 있으면 '이전' 버튼 비활성화
+		first = ''; // 1페이지에 있으면 '처음' 버튼 비활성화
+	}
+
+	// 마지막 페이지가 아닐 경우, '다음' 버튼 생성
+	var next = '';
+	var last = '';
+	if (pageNumber < totalPages) {
+		if (pageNumber !== totalPages - 1) {
+			next = '<li class="page-item"><a class="page-link" style="margin: 0px 5px 0px 5px;">다음 ›</a></li>';
+			last = '<li class="page-item"><a class="page-link" style="margin: 0px 5px 0px 5px;">끝 »</a></li>';
+		}
+	} else {
+		next = ''; // 마지막 페이지에 있으면 '다음' 버튼 비활성화
+		last = ''; // 마지막 페이지에 있으면 '끝' 버튼 비활성화
+	}
+
+	var start = pageNumber - (pageNumber % numLinks) + 1;
+	var end = start + numLinks - 1;
+	end = Math.min(totalPages, end);
+	var pagingLink = '';
+
+	for (var i = start; i <= end; i++) {
+		if (i == pageNumber + 1) {
+			// 현재 페이지 버튼은 만들지 않음
+			pagingLink += '<li class="page-item active"><a class="page-link" style="margin: 0px 5px 0px 5px; font-weight: bold"> ' + i + ' </a></li>';
+		} else {
+			pagingLink += '<li class="page-item"><a class="page-link" style="margin: 0px 5px 0px 5px;"> ' + i + ' </a></li>';
+		}
+	}
+
+	// 페이지 링크 반환
+	pagingLink = first + prev + pagingLink + next + last;
+	$("ul.pagination").append(pagingLink);
+}
+
+function  createPrevNextButton(next) {
 	var prevButton = '';
 	var nextButton = '';
 
@@ -100,13 +163,47 @@ function createPageList(next) {
 // 페이지 버튼 클릭시 함수
 $(document).on("click", "ul.pagination li a", function () {
 	let val = $(this).text();
-	console.log('val: ' + val);
 
 	// click on the NEXT tag
-	if (val === "이전") {
-		getData(nowPage - 1);
-	} else if (val === "다음") {
-		getData(nowPage + 1);
+	// if (val === "이전") { // 이전, 다음 버튼만 할 때
+	// 	getData(nowPage - 1);
+	// } else if (val === "다음") { // 이전, 다음 버튼만 할 때
+	// 	getData(nowPage + 1);
+	// }
+
+	if(val === "« 처음") {
+		let currentActive = $("li.active");
+		getData(0);
+		$("li.active").removeClass("active"); // 이전 버튼 비활성화
+		currentActive.next().addClass("active"); // '처음' 버튼 활성화
+	} else if(val === "끝 »") {
+		getData(totalPages - 1);
+		$("li.active").removeClass("active"); // 이전 버튼 비활성화
+		currentActive.next().addClass("active"); // '끝' 버튼 활성화
+	} else if(val === "다음 ›") {
+		let activeValue = parseInt($("ul.pagination li.active").text());
+		console.log(activeValue)
+		if(activeValue < totalPages){
+			let currentActive = $("li.active");
+			startPage = activeValue;
+			getData(startPage);
+			$("li.active").removeClass("active"); // 이전 버튼 비활성화
+			currentActive.next().addClass("active"); // '다음' 버튼 활성화
+		}
+	} else if(val === "‹ 이전") {
+		let activeValue = parseInt($("ul.pagination li.active").text());
+		if(activeValue > 1) {
+			startPage = activeValue - 2; // 이전 페이지 번호
+			getData(startPage);
+			let currentActive = $("li.active");
+			currentActive.removeClass("active"); // 이전 버튼 비활성화
+			currentActive.prev().addClass("active"); // '이전' 버튼 활성화
+		}
+	} else { // "번호"
+		startPage = parseInt(val - 1);
+		getData(startPage);
+		$("li.active").removeClass("active"); // 이전 버튼 비활성화
+		$(this).parent().addClass("active"); // 'N' 버튼 활성화
 	}
 });
 

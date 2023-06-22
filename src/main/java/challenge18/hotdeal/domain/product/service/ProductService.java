@@ -5,11 +5,15 @@ import challenge18.hotdeal.domain.product.dto.AllProductResponseDto;
 import challenge18.hotdeal.domain.product.dto.ProductSearchCondition;
 import challenge18.hotdeal.domain.product.dto.SelectProductResponseDto;
 import challenge18.hotdeal.domain.product.entity.Product;
+import challenge18.hotdeal.domain.product.repository.ProductElasticSearchRepository;
 import challenge18.hotdeal.domain.product.repository.ProductRepository;
 import challenge18.hotdeal.domain.purchase.entity.Purchase;
 import challenge18.hotdeal.domain.purchase.repository.PurchaseRepository;
 import challenge18.hotdeal.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -26,6 +30,15 @@ public class ProductService{
 
     private final ProductRepository productRepository;
     private final PurchaseRepository purchaseRepository;
+    private final ProductElasticSearchRepository productElasticSearchRepository;
+
+    public Page<SelectProductResponseDto> getProductsES(ProductSearchCondition condition, Pageable pageable) {
+        if (condition.isEmpty()) {
+            LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+            return new PageImpl<>(purchaseRepository.findTopN(today), pageable, pageable.getPageSize());
+        }
+        return productElasticSearchRepository.findByCondition(condition, pageable);
+    }
 
     // 상품 전체 조회 (필터링)
     public AllProductResponseDto getProducts(ProductSearchCondition condition) {

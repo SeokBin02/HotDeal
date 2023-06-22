@@ -1,0 +1,39 @@
+{
+  "mappings": {
+    "_doc": {
+      "properties": {
+        "categorya": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword"
+            }
+          }
+        },
+        "categoryb": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword"
+            }
+          }
+        },
+        "price": {
+          "type": "long"
+        },
+        "product_id": {
+          "type": "long"
+        },
+        "product_name": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword"
+            }
+          },
+          "analyzer": "hotdeal_nori_discard"
+        }
+      }
+    }
+  }
+}
