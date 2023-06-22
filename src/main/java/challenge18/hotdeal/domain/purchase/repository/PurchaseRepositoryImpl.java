@@ -35,8 +35,8 @@ public class PurchaseRepositoryImpl implements PurchaseRespositoryCustom {
 
     @Override
     @Cacheable(cacheNames = POPULAR_ITEM, cacheManager = "redisCacheManager", key = "#today")
-    public List<SelectProductResponseDto> findTopN(String today, String yesterday) {
-        System.out.println("yesterday = " + yesterday);
+    public List<SelectProductResponseDto> findTopN(LocalDate today) {
+        String yesterday = today.minusDays(1L).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
         EntityManager em = emf.createEntityManager();
         String sql = "SELECT p.product_id as product_id, p.product_name as productName, p.price, " +

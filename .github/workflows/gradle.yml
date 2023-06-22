@@ -65,7 +65,7 @@ jobs:
     - name: Deploy
       uses: appleboy/ssh-action@master
       with:
-        host: 3.37.66.245
+        host: 3.37.156.141
         username: ubuntu
         key: ${{ secrets.PRIVATE_KEY }}
         envs: GITHUB_SHA

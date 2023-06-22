@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
@@ -22,13 +21,12 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<Message> signup(@RequestBody SignupRequest reqeust){
-        return userService.signup(reqeust);
+    public ResponseEntity<Message> signup(@RequestBody SignupRequest request){
+        return userService.signup(request);
     }
 
     @PostMapping("/login")
     public ResponseEntity<Message> login(@RequestBody LoginRequest request, HttpServletResponse response){
-        log.info("controller");
         return userService.login(request, response);
     }
 }

@@ -33,12 +33,18 @@ public class Purchase extends TimeStamped {
 
     private String purchaseDate;
 
-    public Purchase(int amount, User user, Product product, LimitedProduct limitedProduct) {
+    public Purchase(int amount, User user, Product product) {
         this.amount = amount;
         this.user = user;
         this.product = product;
+    }
+
+    public Purchase(int amount, User user, LimitedProduct limitedProduct) {
+        this.amount = amount;
+        this.user = user;
         this.limitedProduct = limitedProduct;
     }
+
     @PostPersist
     private void setDate(){
         LocalDateTime createAt = super.getCreateAt();

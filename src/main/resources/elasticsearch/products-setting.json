@@ -1,0 +1,45 @@
+{
+  "settings": {
+    "index": {
+      "routing": {
+        "allocation": {
+          "include": {
+            "_tier_preference": "data_content"
+          }
+        }
+      },
+      "number_of_shards": "1",
+      "analysis": {
+        "analyzer": {
+          "hotdeal_nori_discard": {
+            "type": "custom",
+            "tokenizer": "nori_discard"
+          },
+          "hotdeal_nori_mixed": {
+            "type": "custom",
+            "tokenizer": "nori_mixed"
+          },
+          "hotdeal_nori_none": {
+            "type": "custom",
+            "tokenizer": "nori_none"
+          },
+        },
+        "tokenizer": {
+          "nori_discard": {
+            "type": "nori_tokenizer",
+            "decompound_mode": "discard"
+          },
+          "nori_mixed": {
+            "type": "nori_tokenizer",
+            "decompound_mode": "mixed"
+          },
+          "nori_none": {
+            "type": "nori_tokenizer",
+            "decompound_mode": "none"
+          },
+        }
+      },
+      "number_of_replicas": "1"
+    }
+  }
+}

@@ -1,51 +1,53 @@
 package challenge18.hotdeal.domain.product.service;
-import challenge18.hotdeal.common.util.ConditionValidate;
+
 import challenge18.hotdeal.common.util.Message;
-import challenge18.hotdeal.domain.product.dto.*;
+import challenge18.hotdeal.domain.product.dto.AllProductResponseDto;
+import challenge18.hotdeal.domain.product.dto.ProductSearchCondition;
+import challenge18.hotdeal.domain.product.dto.SelectProductResponseDto;
 import challenge18.hotdeal.domain.product.entity.Product;
+import challenge18.hotdeal.domain.product.repository.ProductElasticSearchRepository;
 import challenge18.hotdeal.domain.product.repository.ProductRepository;
 import challenge18.hotdeal.domain.purchase.entity.Purchase;
 import challenge18.hotdeal.domain.purchase.repository.PurchaseRepository;
 import challenge18.hotdeal.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.SimpleDateFormat;
-
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.ZoneId;
 
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class ProductService extends ConditionValidate {
+public class ProductService{
 
     private final ProductRepository productRepository;
     private final PurchaseRepository purchaseRepository;
+    private final ProductElasticSearchRepository productElasticSearchRepository;
+
+    public Page<SelectProductResponseDto> getProductsES(ProductSearchCondition condition, Pageable pageable) {
+        if (condition.isEmpty()) {
+            LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+            return new PageImpl<>(purchaseRepository.findTopN(today), pageable, pageable.getPageSize());
+        }
+        return productElasticSearchRepository.findByCondition(condition, pageable);
+    }
 
     // 상품 전체 조회 (필터링)
-    public AllProductResponseDto allProduct(ProductSearchCondition condition) {
-        condition.setCondition(validateInput(condition));
+    public AllProductResponseDto getProducts(ProductSearchCondition condition) {
 
         // 조건이 없을 경우 전날 판매 실적 기준 TopN
-        if (checkConditionNull(condition)) {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
-
+        if (condition.isEmpty()) {
             // 오늘
-            Date now = new Date();
-            String today = simpleDateFormat.format(now);
-
-            // 어제
-            Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.DATE, -1);
-            String yesterday = simpleDateFormat.format(calendar.getTime());
-
-            return new AllProductResponseDto(purchaseRepository.findTopN(today, yesterday), false);
+            LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+            return new AllProductResponseDto(purchaseRepository.findTopN(today), false);
         }
 
         // 조건 필터링
@@ -53,8 +55,8 @@ public class ProductService extends ConditionValidate {
     }
 
     //상품 상세 조회
-    public SelectProductResponseDto selectProduct(Long productId){
-        Product product = checkExistProduct(productId);
+    public SelectProductResponseDto getProductDetail(Long productId){
+        Product product = findProductById(productId);
         return new SelectProductResponseDto(product);
     }
 
@@ -65,7 +67,7 @@ public class ProductService extends ConditionValidate {
             return new ResponseEntity<>(new Message("로그인이 필요합니다."), HttpStatus.BAD_REQUEST);
         }
 
-        Product product = checkExistProduct(productId);
+        Product product = findProductById(productId);
 
         if (product.getAmount() <= 0) {
             throw new IllegalArgumentException("상품 재고가 없습니다.");
@@ -74,11 +76,11 @@ public class ProductService extends ConditionValidate {
         }
 
         product.buy(quantity);
-        purchaseRepository.save(new Purchase(quantity, user, product, null));
+        purchaseRepository.save(new Purchase(quantity, user, product));
         return new ResponseEntity<>(new Message("상품 구매 성공"), HttpStatus.OK);
     }
 
-    public Product checkExistProduct(Long productId){
+    public Product findProductById(Long productId){
         return productRepository.findById(productId).orElseThrow((
                 () -> new IllegalArgumentException("상품이 존재하지 않습니다.")
                 ));

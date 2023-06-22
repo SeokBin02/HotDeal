@@ -1,6 +1,7 @@
 package challenge18.hotdeal.domain.product.dto;
 
 import challenge18.hotdeal.domain.limited.entity.LimitedProduct;
+import challenge18.hotdeal.domain.product.document.ProductDocument;
 import challenge18.hotdeal.domain.product.entity.Product;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,6 @@ public class SelectProductResponseDto {
         this.categoryA = product.getCategoryA();
         this.categoryB = product.getCategoryB();
         this.amount = product.getAmount();
-
     }
 
     public SelectProductResponseDto(LimitedProduct limitedProduct) {
@@ -52,5 +52,11 @@ public class SelectProductResponseDto {
         this.categoryA = categoryA;
         this.categoryB = categoryB;
         this.amount = amount;
+    }
+
+    public SelectProductResponseDto(ProductDocument document) {
+        this.id = document.getProduct_id();
+        this.productName = document.getProduct_name();
+        this.price = document.getPrice();
     }
 }
