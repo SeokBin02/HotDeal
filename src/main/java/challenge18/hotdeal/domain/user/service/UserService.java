@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -37,11 +38,11 @@ public class UserService {
 
 
     // 회원가입
-    @Transactional
+    @Transactional(readOnly = false)
     public ResponseEntity<Message> signup(SignupRequest request) {
         UserRole role = UserRole.ROLE_USER;
 
-        // 유저 중복 체크
+        // 유저 중복
         if (userRepository.findById(request.getUserId()).isPresent()) {
             throw new DuplicateRequestException("중복된 회원이 이미 존재합니다.");
         }
