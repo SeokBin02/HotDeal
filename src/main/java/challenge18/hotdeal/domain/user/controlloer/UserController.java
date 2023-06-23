@@ -1,5 +1,6 @@
 package challenge18.hotdeal.domain.user.controlloer;
 
+import challenge18.hotdeal.common.facade.RedissonLockFacade;
 import challenge18.hotdeal.common.util.Message;
 import challenge18.hotdeal.domain.user.service.UserService;
 import challenge18.hotdeal.domain.user.dto.LoginRequest;
@@ -19,10 +20,11 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
+    private final RedissonLockFacade facade;
 
     @PostMapping("/signup")
     public ResponseEntity<Message> signup(@RequestBody SignupRequest request){
-        return userService.signup(request);
+        return facade.signup(request);
     }
 
     @PostMapping("/login")
